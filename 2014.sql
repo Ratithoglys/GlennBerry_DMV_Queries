@@ -1,7 +1,7 @@
 
 -- SQL Server 2014 Diagnostic Information Queries
 -- Glenn Berry 
--- Last Modified: November 17, 2019
+-- Last Modified: November 18, 2019
 -- https://www.sqlskills.com/blogs/glenn/
 -- http://sqlserverperformance.wordpress.com/
 -- Twitter: GlennAlanBerry
@@ -1831,17 +1831,11 @@ ORDER BY bs.backup_finish_date DESC OPTION (RECOMPILE);
 
 
 
--- Sign up for Microsoft Visual Studio Dev Essentials and get a free three month pass to Pluralsight
-
 -- Microsoft Visual Studio Dev Essentials
--- http://bit.ly/1q6xbDL
+-- https://bit.ly/2qjNRxi
 
-
--- Sign up for Microsoft Azure Essentials and get lots of free Azure usage credits, MCP exam voucher, three month Pluralsight subscription
-
--- Microsoft Azure Essentials
--- https://bit.ly/2JMWe8x
-
+-- Microsoft Azure Learn
+-- https://bit.ly/2O0Hacc
 
 -- August 2017 blog series about upgrading and migrating to SQL Server 2016/2017
 -- https://bit.ly/2ftKVrX
