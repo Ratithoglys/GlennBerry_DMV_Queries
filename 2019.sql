@@ -1,7 +1,7 @@
 
 -- SQL Server 2019 Diagnostic Information Queries
 -- Glenn Berry 
--- Last Modified: January 8, 2020
+-- Last Modified: January 15, 2020
 -- https://glennsqlperformance.com/ 
 -- https://sqlserverperformance.wordpress.com/
 -- Twitter: GlennAlanBerry
@@ -76,6 +76,9 @@ SELECT @@SERVERNAME AS [Server Name], @@VERSION AS [SQL Server and OS Version In
 
 -- SQL Server 2019 build versions
 -- https://bit.ly/2qjKwOl
+
+-- Performance and Stability Fixes in SQL Server 2019 CU Builds
+-- https://bit.ly/3712NQQ
 
 -- What's New in SQL Server 2019 (Database Engine)
 -- https://bit.ly/2Q29fhz
