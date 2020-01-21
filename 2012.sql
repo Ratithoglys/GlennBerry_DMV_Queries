@@ -1,7 +1,7 @@
 
 -- SQL Server 2012 Diagnostic Information Queries
 -- Glenn Berry 
--- Last Modified: January 1, 2020
+-- Last Modified: January 20, 2020
 -- https://glennsqlperformance.com/
 -- https://sqlserverperformance.wordpress.com/
 -- Twitter: GlennAlanBerry
@@ -347,6 +347,9 @@ ORDER BY sj.name OPTION (RECOMPILE);
 -- SQL Server Maintenance Solution
 -- https://bit.ly/1pgchQu
 
+-- You can use this script to add default schedules to the standard Ola Hallengren Maintenance Solution jobs
+-- https://bit.ly/3ane0gN
+
 
 -- Get SQL Server Agent Alert Information (Query 11) (SQL Server Agent Alerts)
 SELECT name, event_source, message_id, severity, [enabled], has_notification, 
@@ -356,7 +359,7 @@ ORDER BY name OPTION (RECOMPILE);
 ------
 
 -- Gives you some basic information about your SQL Server Agent Alerts (which are different from SQL Server Agent jobs)
--- Read more about Agent Alerts here: https://bit.ly/2Giz0Xf
+-- Read more about Agent Alerts here: https://bit.ly/2v5YR37
 
 
 

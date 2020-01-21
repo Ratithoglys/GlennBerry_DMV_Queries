@@ -1,7 +1,7 @@
 
 -- SQL Server 2008 R2 Diagnostic Information Queries
 -- Glenn Berry 
--- Last Modified: January 1, 2020
+-- Last Modified: January 20, 2020
 -- https://glennsqlperformance.com/
 -- https://sqlserverperformance.wordpress.com/
 -- Twitter: GlennAlanBerry
@@ -167,7 +167,7 @@ ORDER BY name OPTION (RECOMPILE);
 ------
 
 -- Gives you some basic information about your SQL Server Agent Alerts (which are different from SQL Server Agent jobs)
--- Read more about Agent Alerts here: https://www.sqlskills.com/blogs/glenn/creating-sql-server-agent-alerts-for-critical-errors/
+-- Read more about Agent Alerts here: https://bit.ly/2v5YR37
 
 
 -- Returns a list of all global trace flags that are enabled (Query 6) (Global Trace Flags)
