@@ -1,7 +1,7 @@
 
 -- SQL Server 2012 Diagnostic Information Queries
 -- Glenn Berry 
--- Last Modified: January 20, 2020
+-- Last Modified: January 21, 2020
 -- https://glennsqlperformance.com/
 -- https://sqlserverperformance.wordpress.com/
 -- Twitter: GlennAlanBerry
@@ -958,20 +958,20 @@ OPTION (RECOMPILE);
 
 -- Cumulative wait stats are not as useful on an idle instance that is not under load or performance pressure
 
--- SQL Server Wait Types Library (Paul Randal)
--- https://www.sqlskills.com/help/waits/
+-- SQL Server Wait Types Library
+-- https://bit.ly/2ePzYO2
 
 -- The SQL Server Wait Type Repository
--- http://blogs.msdn.com/b/psssql/archive/2009/11/03/the-sql-server-wait-type-repository.aspx
+-- https://bit.ly/1afzfjC
 
 -- Wait statistics, or please tell me where it hurts
--- http://www.sqlskills.com/blogs/paul/wait-statistics-or-please-tell-me-where-it-hurts/
+-- https://bit.ly/2wsQHQE
 
 -- SQL Server 2005 Performance Tuning using the Waits and Queues
--- http://technet.microsoft.com/en-us/library/cc966413.aspx
+-- https://bit.ly/1o2NFoF
 
 -- sys.dm_os_wait_stats (Transact-SQL)
--- http://msdn.microsoft.com/en-us/library/ms179984(v=sql.120).aspx
+-- https://bit.ly/2Hjq9Yl
 
 
 
@@ -1010,7 +1010,7 @@ WHERE scheduler_id < 255 OPTION (RECOMPILE);
 -- High Avg Pending DiskIO Counts are a sign of disk pressure
 
 -- How to Do Some Very Basic SQL Server Monitoring
--- https://bit.ly/2q3Btgt
+-- https://bit.ly/30IRla0
 
 
 
