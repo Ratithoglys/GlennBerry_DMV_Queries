@@ -1,7 +1,7 @@
 
 -- SQL Server 2017 Diagnostic Information Queries
 -- Glenn Berry 
--- Last Modified: January 21, 2020
+-- Last Modified: January 22, 2020
 -- https://glennsqlperformance.com/
 -- https://sqlserverperformance.wordpress.com/
 -- Twitter: GlennAlanBerry
@@ -214,7 +214,7 @@ DBCC TRACESTATUS (-1);
 --           https://bit.ly/2sboMli (added in CU12)
 
 -- TF 3226 - Supresses logging of successful database backup messages to the SQL Server Error Log
---           https://bit.ly/2p6MTjS  
+--           https://bit.ly/38zDNAK  
 
 -- TF 6534 - Enables use of native code to improve performance with spatial data
 --           https://bit.ly/2HrQUpU         

@@ -1,7 +1,7 @@
 
 -- SQL Server 2008 R2 Diagnostic Information Queries
 -- Glenn Berry 
--- Last Modified: January 21, 2020
+-- Last Modified: January 22, 2020
 -- https://glennsqlperformance.com/
 -- https://sqlserverperformance.wordpress.com/
 -- Twitter: GlennAlanBerry
@@ -179,18 +179,18 @@ DBCC TRACESTATUS (-1);
 
 -- Common trace flags that should be enabled in most cases
 -- TF 1117 - When growing a data file, grow all files at the same time so they remain the same size, reducing allocation contention points
---           http://support2.microsoft.com/kb/2154845
+--           https://bit.ly/2GY1kOl5
 -- 
 -- TF 1118 - Helps alleviate allocation contention in tempdb, SQL Server allocates full extents to each database object, 
 --           thereby eliminating the contention on SGAM pages (more important with older versions of SQL Server)
 --           Recommendations to reduce allocation contention in SQL Server tempdb database
---           http://support2.microsoft.com/kb/2154845
+--           https://bit.ly/2GY1kOl
 
 -- TF 2371 - Lowers auto update statistics threshold for large tables
---           http://blogs.msdn.com/b/saponsqlserver/archive/2011/09/07/changes-to-automatic-update-statistics-in-sql-server-traceflag-2371.aspx
+--           https://bit.ly/30KO4Hh
 
 -- TF 3226 - Supresses logging of successful database backup messages to the SQL Server Error Log
---           https://www.sqlskills.com/blogs/paul/fed-up-with-backup-success-messages-bloating-your-error-logs/
+--           https://bit.ly/38zDNAK 
 
 
 -- Windows information (SQL Server 2008 R2 SP1 or greater)  (Query 7) (Windows Info)

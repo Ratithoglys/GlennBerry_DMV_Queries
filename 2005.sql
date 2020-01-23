@@ -1,7 +1,7 @@
 
 -- SQL Server 2005 Diagnostic Information Queries
 -- Glenn Berry 
--- Last Modified: January 21, 2020
+-- Last Modified: January 22, 2020
 -- https://glennsqlperformance.com/
 -- https://sqlserverperformance.wordpress.com/
 -- Twitter: GlennAlanBerry
@@ -146,7 +146,7 @@ ORDER BY name OPTION (RECOMPILE);
 ------
 
 -- Gives you some basic information about your SQL Server Agent Alerts (which are different from SQL Server Agent jobs)
--- Read more about Agent Alerts here: https://www.sqlskills.com/blogs/glenn/creating-sql-server-agent-alerts-for-critical-errors/
+-- Read more about Agent Alerts here: https://bit.ly/2v5YR37
 
 
 -- Returns a list of all global trace flags that are enabled (Query 6) (Global Trace Flags)
@@ -158,15 +158,15 @@ DBCC TRACESTATUS (-1);
 
 -- Common trace flags that should be enabled in most cases
 -- TF 1117 - When growing a data file, grow all files at the same time so they remain the same size, reducing allocation contention points
---           http://support2.microsoft.com/kb/2154845
+--           https://bit.ly/2GY1kOl
 -- 
 -- TF 1118 - Helps alleviate allocation contention in tempdb, SQL Server allocates full extents to each database object, 
 --           thereby eliminating the contention on SGAM pages (more important with older versions of SQL Server)
 --           Recommendations to reduce allocation contention in SQL Server tempdb database
---           http://support2.microsoft.com/kb/2154845
+--           https://bit.ly/2GY1kOl
 
 -- TF 3226 - Supresses logging of successful database backup messages to the SQL Server Error Log
---           https://www.sqlskills.com/blogs/paul/fed-up-with-backup-success-messages-bloating-your-error-logs/
+--           https://bit.ly/38zDNAK 
 
 
 -- Hardware Information from SQL Server 2005  (Query 7) (Hardware Info)
