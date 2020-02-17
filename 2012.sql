@@ -1,7 +1,7 @@
 
 -- SQL Server 2012 Diagnostic Information Queries
 -- Glenn Berry 
--- Last Modified: February 4, 2020
+-- Last Modified: February 15, 2020
 -- https://glennsqlperformance.com/
 -- https://sqlserverperformance.wordpress.com/
 -- Twitter: GlennAlanBerry
@@ -91,9 +91,14 @@ SELECT @@SERVERNAME AS [Server Name], @@VERSION AS [SQL Server and OS Version In
 --																																									   11.0.6607		SP3 CU10		  8/8/2017																											
 --																																																							11.0.7001		SP4 RTM				10/3/2017	
 -- 
+--
+-- Security Update for SQL Server 2012 SP4 (KB4532098) 
+-- https://support.microsoft.com/en-us/help/4532098/security-update-for-sql-server-2012-sp4-gdr
+
 -- Security Update for SQL Server 2012 SP4 (KB4057116) 
 -- https://bit.ly/2F33Sc4
 --                                                                                                                                                                                                                          11.0.7462	    Security Update		1/12/2018  (Security Update for SQL Server 2012 SP4 (KB4057116))
+--																																																							11.0.7493.4		Security Update		2/11/2020  (Security Update for SQL Server 2012 SP4 (KB4532098))														
 -- SQL Server 2012 Service Pack 4 (SP4) Released!
 -- https://bit.ly/2qN8kr3
 

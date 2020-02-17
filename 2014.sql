@@ -1,7 +1,7 @@
 
 -- SQL Server 2014 Diagnostic Information Queries
 -- Glenn Berry 
--- Last Modified: February 4, 2020
+-- Last Modified: February 15, 2020
 -- https://glennsqlperformance.com/
 -- https://sqlserverperformance.wordpress.com/
 -- Twitter: GlennAlanBerry
@@ -95,6 +95,8 @@ SELECT @@SERVERNAME AS [Server Name], @@VERSION AS [SQL Server and OS Version In
 --																													12.0.5687		SP2 CU18		 7/29/2019 ---->	12.0.6329	SP3	CU4		 7/29/2019
 
 
+-- 12.0.6372.1  Security Update for SQL Server 2016 SP3 CU4   February 11, 2020
+-- https://support.microsoft.com/en-us/help/4535288/description-of-the-security-update-for-sql-server-2014-sp3-cu4-feb
 
 -- How to determine the version, edition and update level of SQL Server and its components 
 -- https://bit.ly/2oAjKgW	
