@@ -1,7 +1,7 @@
 
 -- SQL Server 2019 Diagnostic Information Queries
 -- Glenn Berry 
--- Last Modified: February 26, 2020
+-- Last Modified: March 3, 2020
 -- https://glennsqlperformance.com/ 
 -- https://sqlserverperformance.wordpress.com/
 -- Twitter: GlennAlanBerry
@@ -142,12 +142,15 @@ SERVERPROPERTY('InstanceDefaultLogPath') AS [InstanceDefaultLogPath],
 SERVERPROPERTY('BuildClrVersion') AS [Build CLR Version],
 SERVERPROPERTY('IsXTPSupported') AS [IsXTPSupported],
 SERVERPROPERTY('IsPolybaseInstalled') AS [IsPolybaseInstalled],				
-SERVERPROPERTY('IsAdvancedAnalyticsInstalled') AS [IsRServicesInstalled];	
+SERVERPROPERTY('IsAdvancedAnalyticsInstalled') AS [IsRServicesInstalled],
+SERVERPROPERTY('IsTempdbMetadataMemoryOptimized') AS [IsTempdbMetadataMemoryOptimized];	
 ------
 
 -- This gives you a lot of useful information about your instance of SQL Server,
 -- such as the ProcessID for SQL Server and your collation
 -- Note: Some columns will be NULL on older SQL Server builds
+
+-- SERVERPROPERTY('IsTempdbMetadataMemoryOptimized') is a new option for SQL Server 2019
 
 -- SERVERPROPERTY (Transact-SQL)
 -- https://bit.ly/2eeaXeI
