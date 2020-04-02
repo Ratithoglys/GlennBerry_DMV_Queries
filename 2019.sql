@@ -1,7 +1,7 @@
 
 -- SQL Server 2019 Diagnostic Information Queries
 -- Glenn Berry 
--- Last Modified: March 13, 2020
+-- Last Modified: March 31, 2020
 -- https://glennsqlperformance.com/ 
 -- https://sqlserverperformance.wordpress.com/
 -- Twitter: GlennAlanBerry
@@ -68,7 +68,8 @@ SELECT @@SERVERNAME AS [Server Name], @@VERSION AS [SQL Server and OS Version In
 -- 15.0.2070.41		GDR1								11/4/2019		https://support.microsoft.com/en-us/help/4517790/servicing-update-for-sql-server-2019-rtm 
 -- 15.0.4003.23		CU1									 1/7/2020		https://support.microsoft.com/en-us/help/4527376/cumulative-update-1-for-sql-server-2019
 -- 15.0.4013.40		CU2									2/13/2020		https://support.microsoft.com/en-us/help/4536075/cumulative-update-2-for-sql-server-2019
--- 15.0.4023.6		CU3									3/12/2020		https://support.microsoft.com/en-us/help/4538853/cumulative-update-3-for-sql-server-2019	
+-- 15.0.4023.6		CU3									3/12/2020		https://support.microsoft.com/en-us/help/4538853/cumulative-update-3-for-sql-server-2019
+-- 15.0.4033.1		CU4									3/31/2020		https://support.microsoft.com/en-us/help/4548597/cumulative-update-4-for-sql-server-2019     
 
 		
 															
