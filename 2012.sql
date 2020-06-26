@@ -416,8 +416,8 @@ WHERE node_state_desc <> N'ONLINE DAC' OPTION (RECOMPILE);
 -- sys.dm_os_nodes (Transact-SQL)
 -- https://bit.ly/2pn5Mw8
 
--- Balancing Your Available SQL Server Core Licenses Evenly Across NUMA Nodes
--- https://bit.ly/2vfC4Rq
+-- How to Balance SQL Server Core Licenses Across NUMA Nodes
+-- https://bit.ly/3i4TyVR
 
 
 
