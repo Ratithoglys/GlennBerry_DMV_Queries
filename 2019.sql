@@ -294,7 +294,6 @@ ORDER BY sj.name OPTION (RECOMPILE);
 -- https://bit.ly/3ane0gN
 
 
-
 -- Get SQL Server Agent Alert Information (Query 10) (SQL Server Agent Alerts)
 SELECT name, event_source, message_id, severity, [enabled], has_notification, 
        delay_between_responses, occurrence_count, last_occurrence_date, last_occurrence_time
@@ -480,7 +479,6 @@ EXEC sys.xp_readerrorlog 0, 1, N'Manufacturer';
 -- Can also be used to confirm if you are running in a VM
 -- This query might take a few seconds if you have not recycled your error log recently
 -- This query will return no results if your error log has been recycled since the instance was started
-
 
 
 -- Get BIOS date from Windows Registry (Query 19) (BIOS Date)
@@ -705,7 +703,6 @@ DROP TABLE #IOWarningResults;
 
 -- Diagnostics in SQL Server help detect stalled and stuck I/O operations
 -- https://bit.ly/2qtaw73
-
 
 
 -- Resource Governor Resource Pool information (Query 30) (RG Resource Pools)
@@ -1935,7 +1932,8 @@ AND es.session_id <> @@SPID OPTION (RECOMPILE);
 
 -- Get any resumable index rebuild operation information (Query 82) (Resumable Index Rebuild)
 SELECT OBJECT_NAME(iro.object_id) AS [Object Name], iro.index_id, iro.name AS [Index Name],
-       iro.sql_text, iro.last_max_dop_used, iro.partition_number, iro.state_desc, iro.start_time, iro.percent_complete
+       iro.sql_text, iro.last_max_dop_used, iro.partition_number, iro.state_desc, 
+	   iro.start_time, iro.percent_complete
 FROM  sys.index_resumable_operations AS iro WITH (NOLOCK)
 OPTION (RECOMPILE);
 ------ 
