@@ -1,7 +1,7 @@
 
 -- SQL Server 2017 Diagnostic Information Queries
 -- Glenn Berry 
--- Last Modified: July 1, 2020
+-- Last Modified: July 2, 2020
 -- https://glennsqlperformance.com/
 -- https://sqlserverperformance.wordpress.com/
 -- Twitter: GlennAlanBerry
@@ -86,7 +86,8 @@ SELECT @@SERVERNAME AS [Server Name], @@VERSION AS [SQL Server and OS Version In
 -- 14.0.3238.1		CU17							    10/8/2019		https://support.microsoft.com/en-us/help/4515579/cumulative-update-17-for-sql-server-2017
 -- 14.0.3257.3		CU18								12/9/2019		https://support.microsoft.com/en-us/help/4527377/cumulative-update-18-for-sql-server-2017
 -- 14.0.3281.6		CU19								2/5/2020		https://support.microsoft.com/en-us/help/4535007/cumulative-update-19-for-sql-server-2017		
--- 14.0.3294.2		CU20								4/7/2020		https://support.microsoft.com/en-us/help/4541283/cumulative-update-20-for-sql-server-2017		
+-- 14.0.3294.2		CU20								4/7/2020		https://support.microsoft.com/en-us/help/4541283/cumulative-update-20-for-sql-server-2017
+-- 14.0.3335.7		CU21								7/1/2020		https://support.microsoft.com/en-us/help/4557397/cumulative-update-21-for-sql-server-2017	
 															
 
 -- How to determine the version, edition and update level of SQL Server and its components 
@@ -164,8 +165,8 @@ SERVERPROPERTY('InstanceDefaultDataPath') AS [InstanceDefaultDataPath],
 SERVERPROPERTY('InstanceDefaultLogPath') AS [InstanceDefaultLogPath],
 SERVERPROPERTY('BuildClrVersion') AS [Build CLR Version],
 SERVERPROPERTY('IsXTPSupported') AS [IsXTPSupported],
-SERVERPROPERTY('IsPolybaseInstalled') AS [IsPolybaseInstalled],				-- New for SQL Server 2016
-SERVERPROPERTY('IsAdvancedAnalyticsInstalled') AS [IsRServicesInstalled];	-- New for SQL Server 2016
+SERVERPROPERTY('IsPolybaseInstalled') AS [IsPolybaseInstalled],				
+SERVERPROPERTY('IsAdvancedAnalyticsInstalled') AS [IsRServicesInstalled];	
 ------
 
 -- This gives you a lot of useful information about your instance of SQL Server,
