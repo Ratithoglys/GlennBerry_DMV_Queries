@@ -1427,6 +1427,7 @@ ORDER BY qs.execution_count DESC OPTION (RECOMPILE);
 
 -- Tells you which cached stored procedures are called the most often
 -- This helps you characterize and baseline your workload
+-- It also helps you find possible caching opportunities
 
 
 -- Top Cached SPs By Avg Elapsed Time (Query 58) (SP Avg Elapsed Time)
