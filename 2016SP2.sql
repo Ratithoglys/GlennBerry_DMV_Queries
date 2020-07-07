@@ -1,7 +1,7 @@
 
 -- SQL Server 2016 SP2 Diagnostic Information Queries
 -- Glenn Berry 
--- Last Modified: July 4, 2020
+-- Last Modified: July 6, 2020
 -- https://glennsqlperformance.com/
 -- https://sqlserverperformance.wordpress.com/
 -- Twitter: GlennAlanBerry
@@ -365,7 +365,7 @@ WHERE node_state_desc <> N'ONLINE DAC' OPTION (RECOMPILE);
 
 -- Gives you some useful information about the composition and relative load on your NUMA nodes
 -- You want to see an equal number of schedulers on each NUMA node
--- Watch out if SQL Server 2017 Standard Edition has been installed 
+-- Watch out if SQL Server 2016 Standard Edition has been installed 
 -- on a physical or virtual machine with more than four sockets or more than 24 physical cores
 
 -- sys.dm_os_nodes (Transact-SQL)
@@ -1247,7 +1247,8 @@ ORDER BY total_worker_time DESC OPTION (RECOMPILE);
 -- sys.dm_exec_function_stats (Transact-SQL)
 -- https://bit.ly/2q1Q6BM
 
-
+-- Showplan Enhancements for UDFs
+-- https://bit.ly/2LVqiQ1
 
 -- Database specific queries *****************************************************************
 
@@ -1274,7 +1275,7 @@ ORDER BY f.[file_id] OPTION (RECOMPILE);
 -- Look at how large and how full the files are and where they are located
 -- Make sure the transaction log is not full!!
 
--- is_autogrow_all_files was new for SQL Server 2016. Equivalent to TF 1117 for user databases
+-- is_autogrow_all_files is new for SQL Server 2016. Equivalent to TF 1117 for user databases
 
 -- SQL Server 2016: Changes in default behavior for autogrow and allocations for tempdb and user databases
 -- https://bit.ly/2evRZSR
@@ -1406,7 +1407,7 @@ qs.max_elapsed_time, qs.last_elapsed_time, qs.total_elapsed_time, qs.execution_c
 ISNULL(qs.execution_count/DATEDIFF(Minute, qs.cached_time, GETDATE()), 0) AS [Calls/Minute], 
 qs.total_worker_time/qs.execution_count AS [AvgWorkerTime], 
 qs.total_worker_time AS [TotalWorkerTime],
-CASE WHEN CONVERT(nvarchar(max), qp.query_plan) LIKE N'%<MissingIndexes>%' THEN 1 ELSE 0 END AS [Has Missing Index],
+CASE WHEN CONVERT(nvarchar(max), qp.query_plan) COLLATE Latin1_General_BIN2 LIKE N'%<MissingIndexes>%' THEN 1 ELSE 0 END AS [Has Missing Index],
 FORMAT(qs.last_execution_time, 'yyyy-MM-dd HH:mm:ss', 'en-US') AS [Last Execution Time], 
 FORMAT(qs.cached_time, 'yyyy-MM-dd HH:mm:ss', 'en-US') AS [Plan Cached Time]
 -- ,qp.query_plan AS [Query Plan] -- Uncomment if you want the Query Plan
