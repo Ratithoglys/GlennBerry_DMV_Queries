@@ -1,7 +1,7 @@
 
 -- SQL Server 2012 Diagnostic Information Queries
 -- Glenn Berry 
--- Last Modified: June 25, 2020
+-- Last Modified: July 7, 2020
 -- https://glennsqlperformance.com/
 -- https://sqlserverperformance.wordpress.com/
 -- Twitter: GlennAlanBerry
@@ -160,7 +160,6 @@ EXEC sys.xp_readerrorlog 0, 1, N'detected', N'socket';
 -- New in SQL Server 2012 SP4
 
 
-
 -- Get selected server properties (Query 3) (Server Properties)
 SELECT SERVERPROPERTY('MachineName') AS [MachineName], 
 SERVERPROPERTY('ServerName') AS [ServerName],  
@@ -261,14 +260,11 @@ EXEC sys.xp_readerrorlog 0, 1, N'Database Instant File Initialization';
 
 -- Lets you determine whether Instant File Initialization (IFI) is enabled for the instance
 -- This should be enabled in the vast majority of cases
+-- Note: This query won't return any results if the SQL Server error log has been recycled
 -- (Added in SQL Server 2012 SP4)
 
 -- Database Instant File Initialization
 -- https://bit.ly/2nTX74y
-
--- Misconceptions around instant file initialization
--- https://bit.ly/2oBSKgZ
-
 
 
 -- SQL Server Process Address space info  (Query 7) (Process Memory)
@@ -363,7 +359,8 @@ FROM msdb.dbo.sysalerts WITH (NOLOCK)
 ORDER BY name OPTION (RECOMPILE);
 ------
 
--- Gives you some basic information about your SQL Server Agent Alerts (which are different from SQL Server Agent jobs)
+-- Gives you some basic information about your SQL Server Agent Alerts 
+-- (which are different from SQL Server Agent jobs)
 -- Read more about Agent Alerts here: https://bit.ly/2v5YR37
 
 
@@ -472,8 +469,29 @@ FROM sys.dm_hadr_cluster WITH (NOLOCK) OPTION (RECOMPILE);
 -- You will see no results if your instance is not using AlwaysOn AGs
 
 
+-- Good overview of AG health and status (Query 17) (AG Status)
+SELECT ag.name AS [AG Name], ar.replica_server_name, ar.availability_mode_desc, adc.[database_name], 
+       drs.is_local, drs.is_primary_replica, drs.synchronization_state_desc, drs.is_commit_participant, 
+	   drs.synchronization_health_desc, drs.recovery_lsn, drs.truncation_lsn, drs.last_sent_lsn, 
+	   drs.last_sent_time, drs.last_received_lsn, drs.last_received_time, drs.last_hardened_lsn, 
+	   drs.last_hardened_time, drs.last_redone_lsn, drs.last_redone_time, drs.log_send_queue_size, 
+	   drs.log_send_rate, drs.redo_queue_size, drs.redo_rate, drs.filestream_send_rate, 
+	   drs.end_of_log_lsn, drs.last_commit_lsn, drs.last_commit_time, drs.database_state_desc 
+FROM sys.dm_hadr_database_replica_states AS drs WITH (NOLOCK)
+INNER JOIN sys.availability_databases_cluster AS adc WITH (NOLOCK)
+ON drs.group_id = adc.group_id 
+AND drs.group_database_id = adc.group_database_id
+INNER JOIN sys.availability_groups AS ag WITH (NOLOCK)
+ON ag.group_id = drs.group_id
+INNER JOIN sys.availability_replicas AS ar WITH (NOLOCK)
+ON drs.group_id = ar.group_id 
+AND drs.replica_id = ar.replica_id
+ORDER BY ag.name, ar.replica_server_name, adc.[database_name] OPTION (RECOMPILE);
 
--- Hardware information from SQL Server 2012  (Query 17) (Hardware Info)
+-- You will see no results if your instance is not using AlwaysOn AGs
+
+
+-- Hardware information from SQL Server 2012  (Query 18) (Hardware Info)
 SELECT cpu_count AS [Logical CPU Count], scheduler_count, 
        hyperthread_ratio AS [Hyperthread Ratio],
        cpu_count/hyperthread_ratio AS [Physical CPU Count], 
@@ -497,7 +515,7 @@ FROM sys.dm_os_sys_info WITH (NOLOCK) OPTION (RECOMPILE);
 -- https://bit.ly/2pczOYs
 
 
--- Get System Manufacturer and model number from SQL Server Error log (Query 18) (System Manufacturer)
+-- Get System Manufacturer and model number from SQL Server Error log (Query 19) (System Manufacturer)
 EXEC sys.xp_readerrorlog 0, 1, N'Manufacturer';
 ------ 
 
@@ -505,16 +523,6 @@ EXEC sys.xp_readerrorlog 0, 1, N'Manufacturer';
 -- Can also be used to confirm if you are running in a VM
 -- This query might take a few seconds if you have not recycled your error log recently
 -- This query will return no results if your error log has been recycled since the instance was started
-
-
--- Get pvscsi info from Windows Registry  (Query 19) (PVSCSI Driver Parameters)
-EXEC sys.xp_instance_regread N'HKEY_LOCAL_MACHINE', N'SYSTEM\CurrentControlSet\services\pvscsi\Parameters\Device', N'DriverParameter';
-------
-
--- This is valid for VMware VMs
--- Recommended value for intensive I/O patterns from VMware is: RequestRingPages=32,MaxQueueDepth=254
--- https://kb.vmware.com/s/article/2053145
-
 
 
 -- Get BIOS date from Windows Registry (Query 20) (BIOS Date)
@@ -538,6 +546,7 @@ EXEC sys.xp_instance_regread N'HKEY_LOCAL_MACHINE', N'HARDWARE\DESCRIPTION\Syste
 
 -- You can learn more about processor selection for SQL Server by following this link
 -- https://bit.ly/2F3aVlP
+
 
 
 
@@ -629,7 +638,6 @@ ORDER BY vs.volume_mount_point OPTION (RECOMPILE);
 
 
 -- Drive level latency information (Query 27) (Drive Level Latency)
--- Based on code from Jimmy May
 SELECT tab.[Drive], tab.volume_mount_point AS [Volume Mount Point], 
 	CASE 
 		WHEN num_of_reads = 0 THEN 0 
@@ -782,8 +790,7 @@ ORDER BY db.[name] OPTION (RECOMPILE);
 
 -- Missing Indexes for all databases by Index Advantage  (Query 32) (Missing Indexes All Databases)
 SELECT CONVERT(decimal(18,2), migs.user_seeks * migs.avg_total_user_cost * (migs.avg_user_impact * 0.01)) AS [index_advantage],
-FORMAT(migs.last_user_seek, 'yyyy-MM-dd HH:mm:ss') AS [last_user_seek], 
-mid.[statement] AS [Database.Schema.Table],
+FORMAT(migs.last_user_seek, 'yyyy-MM-dd HH:mm:ss') AS [last_user_seek], mid.[statement] AS [Database.Schema.Table],
 COUNT(1) OVER(PARTITION BY mid.[statement]) AS [missing_indexes_for_table],
 COUNT(1) OVER(PARTITION BY mid.[statement], equality_columns) AS [similar_missing_indexes_for_table],
 mid.equality_columns, mid.inequality_columns, mid.included_columns, migs.user_seeks, 
@@ -840,6 +847,8 @@ DROP TABLE #VLFCountResults;
 -- and they can make full database restores and crash recovery take much longer
 -- Try to keep your VLF counts under 200 in most cases (depending on log file size)
 
+-- SQL Server Transaction Log Architecture and Management Guide
+-- https://bit.ly/2JjmQRZ
 
 
 -- Get CPU utilization by database (Query 34) (CPU Usage by Database)
@@ -1086,7 +1095,7 @@ qs.min_logical_reads AS [Min Logical Reads],
 qs.total_logical_reads/qs.execution_count AS [Avg Logical Reads],
 qs.max_logical_reads AS [Max Logical Reads], 
 qs.execution_count AS [Execution Count],
-CASE WHEN CONVERT(nvarchar(max), qp.query_plan) LIKE N'%<MissingIndexes>%' THEN 1 ELSE 0 END AS [Has Missing Index], 
+CASE WHEN CONVERT(nvarchar(max), qp.query_plan) COLLATE Latin1_General_BIN2 LIKE N'%<MissingIndexes>%' THEN 1 ELSE 0 END AS [Has Missing Index], 
 qs.creation_time AS [Creation Time]
 --,t.[text] AS [Query Text], qp.query_plan AS [Query Plan] -- uncomment out these columns if not copying results to Excel
 FROM sys.dm_exec_query_stats AS qs WITH (NOLOCK)
@@ -1168,7 +1177,7 @@ ORDER BY cp.size_in_bytes DESC, DB_NAME(t.[dbid]) OPTION (RECOMPILE);
 -- Enabling forced parameterization for the database can help, but test first!
 
 -- Plan cache, adhoc workloads and clearing the single-use plan cache bloat
--- https://www.sqlskills.com/blogs/kimberly/plan-cache-adhoc-workloads-and-clearing-the-single-use-plan-cache-bloat/
+-- https://bit.ly/2EfYOkl
 
 
 -- Get top total logical reads queries for entire instance (Query 47) (Top Logical Reads Queries)
@@ -1185,7 +1194,7 @@ qs.min_elapsed_time AS [Min Elapsed Time],
 qs.total_elapsed_time/qs.execution_count AS [Avg Elapsed Time], 
 qs.max_elapsed_time AS [Max Elapsed Time],
 qs.execution_count AS [Execution Count], 
-CASE WHEN CONVERT(nvarchar(max), qp.query_plan) LIKE N'%<MissingIndexes>%' THEN 1 ELSE 0 END AS [Has Missing Index],
+CASE WHEN CONVERT(nvarchar(max), qp.query_plan) COLLATE Latin1_General_BIN2 LIKE N'%<MissingIndexes>%' THEN 1 ELSE 0 END AS [Has Missing Index],
 qs.creation_time AS [Creation Time]
 --,t.[text] AS [Complete Query Text], qp.query_plan AS [Query Plan] -- uncomment out these columns if not copying results to Excel
 FROM sys.dm_exec_query_stats AS qs WITH (NOLOCK)
@@ -1208,7 +1217,7 @@ qs.execution_count AS [Execution Count],
 qs.total_logical_reads/qs.execution_count AS [Avg Logical Reads], 
 qs.total_physical_reads/qs.execution_count AS [Avg Physical Reads], 
 qs.total_worker_time/qs.execution_count AS [Avg Worker Time],
-CASE WHEN CONVERT(nvarchar(max), qp.query_plan) LIKE N'%<MissingIndexes>%' THEN 1 ELSE 0 END AS [Has Missing Index],
+CASE WHEN CONVERT(nvarchar(max), qp.query_plan) COLLATE Latin1_General_BIN2 LIKE N'%<MissingIndexes>%' THEN 1 ELSE 0 END AS [Has Missing Index],
 qs.creation_time AS [Creation Time]
 --,t.[text] AS [Complete Query Text], qp.query_plan AS [Query Plan] -- uncomment out these columns if not copying results to Excel
 FROM sys.dm_exec_query_stats AS qs WITH (NOLOCK)
@@ -1279,7 +1288,7 @@ qs.total_worker_time AS [Total Worker Time],
 qs.total_worker_time/qs.execution_count AS [Avg Worker Time], 
 qs.total_elapsed_time AS [Total Elapsed Time],
 qs.total_elapsed_time/qs.execution_count AS [Avg Elapsed Time],
-CASE WHEN CONVERT(nvarchar(max), qp.query_plan) LIKE N'%<MissingIndexes>%' THEN 1 ELSE 0 END AS [Has Missing Index], 
+CASE WHEN CONVERT(nvarchar(max), qp.query_plan) COLLATE Latin1_General_BIN2 LIKE N'%<MissingIndexes>%' THEN 1 ELSE 0 END AS [Has Missing Index], 
 qs.creation_time AS [Creation Time]
 --,t.[text] AS [Complete Query Text], qp.query_plan AS [Query Plan] -- uncomment out these columns if not copying results to Excel
 FROM sys.dm_exec_query_stats AS qs WITH (NOLOCK)
@@ -1290,14 +1299,15 @@ ORDER BY qs.execution_count DESC OPTION (RECOMPILE);
 ------
 
 
--- Queries 50 through 55 are the "Bad Man List" for stored procedures
+-- Queries 52 through 57 are the "Bad Man List" for stored procedures
+
 -- Top Cached SPs By Execution Count (Query 52) (SP Execution Counts)
 SELECT TOP(100) p.name AS [SP Name], qs.execution_count AS [Execution Count],
 ISNULL(qs.execution_count/DATEDIFF(Minute, qs.cached_time, GETDATE()), 0) AS [Calls/Minute],
 qs.total_elapsed_time/qs.execution_count AS [Avg Elapsed Time],
 qs.total_worker_time/qs.execution_count AS [Avg Worker Time],    
 qs.total_logical_reads/qs.execution_count AS [Avg Logical Reads],
-CASE WHEN CONVERT(nvarchar(max), qp.query_plan) LIKE N'%<MissingIndexes>%' THEN 1 ELSE 0 END AS [Has Missing Index],
+CASE WHEN CONVERT(nvarchar(max), qp.query_plan) COLLATE Latin1_General_BIN2 LIKE N'%<MissingIndexes>%' THEN 1 ELSE 0 END AS [Has Missing Index],
 FORMAT(qs.last_execution_time, 'yyyy-MM-dd HH:mm:ss', 'en-US') AS [Last Execution Time], 
 FORMAT(qs.cached_time, 'yyyy-MM-dd HH:mm:ss', 'en-US') AS [Plan Cached Time]
 -- ,qp.query_plan AS [Query Plan] -- Uncomment if you want the Query Plan
@@ -1312,6 +1322,7 @@ ORDER BY qs.execution_count DESC OPTION (RECOMPILE);
 
 -- Tells you which cached stored procedures are called the most often
 -- This helps you characterize and baseline your workload
+-- It also helps you find possible caching opportunities
 
 
 -- Top Cached SPs By Avg Elapsed Time (Query 53) (SP Avg Elapsed Time)
@@ -1320,6 +1331,7 @@ qs.max_elapsed_time, qs.last_elapsed_time, qs.total_elapsed_time, qs.execution_c
 ISNULL(qs.execution_count/DATEDIFF(Minute, qs.cached_time, GETDATE()), 0) AS [Calls/Minute], 
 qs.total_worker_time/qs.execution_count AS [AvgWorkerTime], 
 qs.total_worker_time AS [TotalWorkerTime],
+CASE WHEN CONVERT(nvarchar(max), qp.query_plan) COLLATE Latin1_General_BIN2 LIKE N'%<MissingIndexes>%' THEN 1 ELSE 0 END AS [Has Missing Index],
 FORMAT(qs.last_execution_time, 'yyyy-MM-dd HH:mm:ss', 'en-US') AS [Last Execution Time], 
 FORMAT(qs.cached_time, 'yyyy-MM-dd HH:mm:ss', 'en-US') AS [Plan Cached Time]
 -- ,qp.query_plan AS [Query Plan] -- Uncomment if you want the Query Plan
@@ -1342,7 +1354,7 @@ SELECT TOP(25) p.name AS [SP Name], qs.total_worker_time AS [TotalWorkerTime],
 qs.total_worker_time/qs.execution_count AS [AvgWorkerTime], qs.execution_count, 
 ISNULL(qs.execution_count/DATEDIFF(Minute, qs.cached_time, GETDATE()), 0) AS [Calls/Minute],
 qs.total_elapsed_time, qs.total_elapsed_time/qs.execution_count AS [avg_elapsed_time],
-CASE WHEN CONVERT(nvarchar(max), qp.query_plan) LIKE N'%<MissingIndexes>%' THEN 1 ELSE 0 END AS [Has Missing Index],
+CASE WHEN CONVERT(nvarchar(max), qp.query_plan) COLLATE Latin1_General_BIN2 LIKE N'%<MissingIndexes>%' THEN 1 ELSE 0 END AS [Has Missing Index],
 FORMAT(qs.last_execution_time, 'yyyy-MM-dd HH:mm:ss', 'en-US') AS [Last Execution Time], 
 FORMAT(qs.cached_time, 'yyyy-MM-dd HH:mm:ss', 'en-US') AS [Plan Cached Time]
 -- ,qp.query_plan AS [Query Plan] -- Uncomment if you want the Query Plan
@@ -1364,7 +1376,7 @@ SELECT TOP(25) p.name AS [SP Name], qs.total_logical_reads AS [TotalLogicalReads
 qs.total_logical_reads/qs.execution_count AS [AvgLogicalReads],qs.execution_count, 
 ISNULL(qs.execution_count/DATEDIFF(Minute, qs.cached_time, GETDATE()), 0) AS [Calls/Minute], 
 qs.total_elapsed_time, qs.total_elapsed_time/qs.execution_count AS [avg_elapsed_time],
-CASE WHEN CONVERT(nvarchar(max), qp.query_plan) LIKE N'%<MissingIndexes>%' THEN 1 ELSE 0 END AS [Has Missing Index], 
+CASE WHEN CONVERT(nvarchar(max), qp.query_plan) COLLATE Latin1_General_BIN2 LIKE N'%<MissingIndexes>%' THEN 1 ELSE 0 END AS [Has Missing Index], 
 FORMAT(qs.last_execution_time, 'yyyy-MM-dd HH:mm:ss', 'en-US') AS [Last Execution Time], 
 FORMAT(qs.cached_time, 'yyyy-MM-dd HH:mm:ss', 'en-US') AS [Plan Cached Time]
 -- ,qp.query_plan AS [Query Plan] -- Uncomment if you want the Query Plan
@@ -1385,7 +1397,7 @@ ORDER BY qs.total_logical_reads DESC OPTION (RECOMPILE);
 SELECT TOP(25) p.name AS [SP Name],qs.total_physical_reads AS [TotalPhysicalReads], 
 qs.total_physical_reads/qs.execution_count AS [AvgPhysicalReads], qs.execution_count, 
 qs.total_logical_reads,qs.total_elapsed_time, qs.total_elapsed_time/qs.execution_count AS [avg_elapsed_time],
-CASE WHEN CONVERT(nvarchar(max), qp.query_plan) LIKE N'%<MissingIndexes>%' THEN 1 ELSE 0 END AS [Has Missing Index],
+CASE WHEN CONVERT(nvarchar(max), qp.query_plan) COLLATE Latin1_General_BIN2 LIKE N'%<MissingIndexes>%' THEN 1 ELSE 0 END AS [Has Missing Index],
 FORMAT(qs.last_execution_time, 'yyyy-MM-dd HH:mm:ss', 'en-US') AS [Last Execution Time], 
 FORMAT(qs.cached_time, 'yyyy-MM-dd HH:mm:ss', 'en-US') AS [Plan Cached Time]
 -- ,qp.query_plan AS [Query Plan] -- Uncomment if you want the Query Plan 
@@ -1409,7 +1421,7 @@ SELECT TOP(25) p.name AS [SP Name], qs.total_logical_writes AS [TotalLogicalWrit
 qs.total_logical_writes/qs.execution_count AS [AvgLogicalWrites], qs.execution_count,
 ISNULL(qs.execution_count/DATEDIFF(Minute, qs.cached_time, GETDATE()), 0) AS [Calls/Minute],
 qs.total_elapsed_time, qs.total_elapsed_time/qs.execution_count AS [avg_elapsed_time],
-CASE WHEN CONVERT(nvarchar(max), qp.query_plan) LIKE N'%<MissingIndexes>%' THEN 1 ELSE 0 END AS [Has Missing Index], 
+CASE WHEN CONVERT(nvarchar(max), qp.query_plan) COLLATE Latin1_General_BIN2 LIKE N'%<MissingIndexes>%' THEN 1 ELSE 0 END AS [Has Missing Index],
 FORMAT(qs.last_execution_time, 'yyyy-MM-dd HH:mm:ss', 'en-US') AS [Last Execution Time], 
 FORMAT(qs.cached_time, 'yyyy-MM-dd HH:mm:ss', 'en-US') AS [Plan Cached Time]
 -- ,qp.query_plan AS [Query Plan] -- Uncomment if you want the Query Plan 
@@ -1499,7 +1511,7 @@ ORDER BY index_advantage DESC OPTION (RECOMPILE);
 -- Find missing index warnings for cached plans in the current database  (Query 61) (Missing Index Warnings)
 -- Note: This query could take some time on a busy instance
 SELECT TOP(25) OBJECT_NAME(objectid) AS [ObjectName], 
-               cp.objtype, cp.usecounts, cp.size_in_bytes, query_plan
+               cp.objtype, cp.usecounts, cp.size_in_bytes, qp.query_plan
 FROM sys.dm_exec_cached_plans AS cp WITH (NOLOCK)
 CROSS APPLY sys.dm_exec_query_plan(cp.plan_handle) AS qp
 WHERE CAST(query_plan AS NVARCHAR(MAX)) LIKE N'%MissingIndex%'
@@ -1585,8 +1597,8 @@ ORDER BY OBJECT_NAME(t.[object_id]), p.index_id OPTION (RECOMPILE);
 
 
 -- When were Statistics last updated on all indexes?  (Query 65) (Statistics Update)
-SELECT SCHEMA_NAME(o.Schema_ID) + N'.' + o.NAME AS [Object Name], o.type_desc AS [Object Type],
-      i.name AS [Index Name], STATS_DATE(i.[object_id], i.index_id) AS [Statistics Date], 
+SELECT SCHEMA_NAME(o.Schema_ID) + N'.' + o.[NAME] AS [Object Name], o.[type_desc] AS [Object Type],
+      i.[name] AS [Index Name], STATS_DATE(i.[object_id], i.index_id) AS [Statistics Date], 
       s.auto_created, s.no_recompute, s.user_created, s.is_temporary,
 	  st.row_count, st.used_page_count
 FROM sys.objects AS o WITH (NOLOCK)
@@ -1608,6 +1620,10 @@ ORDER BY STATS_DATE(i.[object_id], i.index_id) DESC OPTION (RECOMPILE);
 
 -- sys.stats (Transact-SQL)
 -- https://msdn.microsoft.com/en-us/library/ms177623.aspx
+
+-- UPDATEs to Statistics (Erin Stellato)
+-- https://bit.ly/2vhrYQy
+
 
 
 

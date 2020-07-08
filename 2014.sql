@@ -1,7 +1,7 @@
 
 -- SQL Server 2014 Diagnostic Information Queries
 -- Glenn Berry 
--- Last Modified: July 6, 2020
+-- Last Modified: July 7, 2020
 -- https://glennsqlperformance.com/
 -- https://sqlserverperformance.wordpress.com/
 -- Twitter: GlennAlanBerry
@@ -497,15 +497,6 @@ FROM sys.dm_os_sys_info WITH (NOLOCK) OPTION (RECOMPILE);
 
 -- sys.dm_os_sys_info (Transact-SQL)
 -- https://bit.ly/2pczOYs
-
--- Soft NUMA configuration was a new column for SQL Server 2016
--- OFF = Soft-NUMA feature is OFF
--- ON = SQL Server automatically determines the NUMA node sizes for Soft-NUMA
--- MANUAL = Manually configured soft-NUMA
-
--- Configure SQL Server to Use Soft-NUMA (SQL Server)
--- https://bit.ly/2HTpKJt
-
 
 
 -- Get System Manufacturer and model number from SQL Server Error log (Query 19) (System Manufacturer)
