@@ -1,11 +1,14 @@
 
 -- SQL Server 2019 Diagnostic Information Queries
 -- Glenn Berry 
--- Last Modified: August 4, 2020
+-- Last Modified: August 13, 2020
 -- https://glennsqlperformance.com/ 
 -- https://sqlserverperformance.wordpress.com/
 -- YouTube: https://bit.ly/2PkoAM1 
 -- Twitter: GlennAlanBerry
+
+-- Diagnostic Queries are available here
+-- https://glennsqlperformance.com/resources/
 
 -- Please listen to my Pluralsight courses
 -- https://www.pluralsight.com/author/glenn-berry
