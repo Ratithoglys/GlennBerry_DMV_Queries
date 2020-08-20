@@ -1,7 +1,7 @@
 
 -- SQL Server 2019 Diagnostic Information Queries
 -- Glenn Berry 
--- Last Modified: August 13, 2020
+-- Last Modified: August 19, 2020
 -- https://glennsqlperformance.com/ 
 -- https://sqlserverperformance.wordpress.com/
 -- YouTube: https://bit.ly/2PkoAM1 
@@ -226,6 +226,9 @@ FROM sys.dm_os_process_memory WITH (NOLOCK) OPTION (RECOMPILE);
 -- You want to see 0 for process_virtual_memory_low
 -- This indicates that you are not under internal memory pressure
 -- If locked_page_allocations_kb > 0, then LPIM is enabled
+
+-- sys.dm_os_process_memory (Transact-SQL)
+-- https://bit.ly/3iUgQgC
 
 -- How to enable the "locked pages" feature in SQL Server 2012
 -- https://bit.ly/2F5UjOA
