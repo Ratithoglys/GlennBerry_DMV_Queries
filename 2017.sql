@@ -1,7 +1,7 @@
 
 -- SQL Server 2017 Diagnostic Information Queries
 -- Glenn Berry 
--- Last Modified: September 1, 2020
+-- Last Modified: September 2, 2020
 -- https://glennsqlperformance.com/
 -- https://sqlserverperformance.wordpress.com/
 -- YouTube: https://bit.ly/2PkoAM1 
@@ -620,7 +620,11 @@ CONVERT(DECIMAL(18,2), free_space_in_bytes/1073741824.0) AS [Available Space (GB
 FROM sys.dm_os_enumerate_fixed_drives WITH (NOLOCK) OPTION (RECOMPILE);
 ------
 
--- This shows all of your fixed drives, not just LUNs with SQL Server database files
+-- This shows all of your drives, not just LUNs with SQL Server database files
+-- New in SQL Server 2017
+
+-- sys.dm_os_enumerate_fixed_drives (Transact-SQL)
+-- https://bit.ly/2EZoHLj
 
 
 
