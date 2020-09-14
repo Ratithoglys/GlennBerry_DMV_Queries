@@ -1,7 +1,7 @@
 
 -- SQL Server 2012 Diagnostic Information Queries
 -- Glenn Berry 
--- Last Modified: September 1, 2020
+-- Last Modified: September 13, 2020
 -- https://glennsqlperformance.com/
 -- https://sqlserverperformance.wordpress.com/
 -- YouTube: https://bit.ly/2PkoAM1 
@@ -686,6 +686,13 @@ ORDER BY [Overall Latency] OPTION (RECOMPILE);
 -- These latency numbers include all file activity against all SQL Server 
 -- database files on each drive since SQL Server was last started
 
+-- sys.dm_io_virtual_file_stats (Transact-SQL)
+-- https://bit.ly/3bRWUc0
+
+-- sys.dm_os_volume_stats (Transact-SQL)
+-- https://bit.ly/33thz2j
+
+
 
 -- Calculates average stalls per read, per write, and per total input/output for each database file  (Query 28) (IO Latency by File)
 SELECT DB_NAME(fs.database_id) AS [Database Name], CAST(fs.io_stall_read_ms/(1.0 + fs.num_of_reads) AS NUMERIC(10,1)) AS [avg_read_latency_ms],
@@ -705,6 +712,10 @@ ORDER BY avg_io_latency_ms DESC OPTION (RECOMPILE);
 -- want to move some files to a different location or perhaps improve your I/O performance
 -- These latency numbers include all file activity against each SQL Server 
 -- database file since SQL Server was last started
+
+-- sys.dm_io_virtual_file_stats (Transact-SQL)
+-- https://bit.ly/3bRWUc0
+
 
 
 -- Look for I/O requests taking longer than 15 seconds in the six most recent SQL Server Error Logs (Query 29) (IO Warnings)

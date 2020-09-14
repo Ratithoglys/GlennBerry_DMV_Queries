@@ -1,7 +1,7 @@
 
 -- SQL Server 2017 Diagnostic Information Queries
 -- Glenn Berry 
--- Last Modified: September 2, 2020
+-- Last Modified: September 13, 2020
 -- https://glennsqlperformance.com/
 -- https://sqlserverperformance.wordpress.com/
 -- YouTube: https://bit.ly/2PkoAM1 
@@ -88,7 +88,8 @@ SELECT @@SERVERNAME AS [Server Name], @@VERSION AS [SQL Server and OS Version In
 -- 14.0.3257.3		CU18								12/9/2019		https://support.microsoft.com/en-us/help/4527377/cumulative-update-18-for-sql-server-2017
 -- 14.0.3281.6		CU19								2/5/2020		https://support.microsoft.com/en-us/help/4535007/cumulative-update-19-for-sql-server-2017		
 -- 14.0.3294.2		CU20								4/7/2020		https://support.microsoft.com/en-us/help/4541283/cumulative-update-20-for-sql-server-2017
--- 14.0.3335.7		CU21								7/1/2020		https://support.microsoft.com/en-us/help/4557397/cumulative-update-21-for-sql-server-2017	
+-- 14.0.3335.7		CU21								7/1/2020		https://support.microsoft.com/en-us/help/4557397/cumulative-update-21-for-sql-server-2017
+-- 14.0.3356.20		CU22								9/10/2020		https://support.microsoft.com/en-us/help/4577467/cumulative-update-22-for-sql-server-2017		
 															
 
 -- How to determine the version, edition and update level of SQL Server and its components 
@@ -691,6 +692,12 @@ ORDER BY [Overall Latency] OPTION (RECOMPILE);
 -- These latency numbers include all file activity against all SQL Server 
 -- database files on each drive since SQL Server was last started
 
+-- sys.dm_io_virtual_file_stats (Transact-SQL)
+-- https://bit.ly/3bRWUc0
+
+-- sys.dm_os_volume_stats (Transact-SQL)
+-- https://bit.ly/33thz2j
+
 
 -- Calculates average stalls per read, per write, and per total input/output for each database file  (Query 28) (IO Latency by File)
 SELECT DB_NAME(fs.database_id) AS [Database Name], CAST(fs.io_stall_read_ms/(1.0 + fs.num_of_reads) AS NUMERIC(10,1)) AS [avg_read_latency_ms],
@@ -711,6 +718,9 @@ ORDER BY avg_io_latency_ms DESC OPTION (RECOMPILE);
 -- want to move some files to a different location or perhaps improve your I/O performance
 -- These latency numbers include all file activity against each SQL Server 
 -- database file since SQL Server was last started
+
+-- sys.dm_io_virtual_file_stats (Transact-SQL)
+-- https://bit.ly/3bRWUc0
 
 
 -- Look for I/O requests taking longer than 15 seconds in the six most recent SQL Server Error Logs (Query 29) (IO Warnings)
