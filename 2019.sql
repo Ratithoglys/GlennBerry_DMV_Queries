@@ -1,7 +1,7 @@
 
 -- SQL Server 2019 Diagnostic Information Queries
 -- Glenn Berry 
--- Last Modified: September 24, 2020
+-- Last Modified: September 28, 2020
 -- https://glennsqlperformance.com/ 
 -- https://sqlserverperformance.wordpress.com/
 -- YouTube: https://bit.ly/2PkoAM1 
@@ -73,15 +73,7 @@ SELECT @@SERVERNAME AS [Server Name], @@VERSION AS [SQL Server and OS Version In
 -- 15.0.4033.1		CU4									3/31/2020		https://support.microsoft.com/en-us/help/4548597/cumulative-update-4-for-sql-server-2019
 -- 15.0.4043.16		CU5									6/22/2020		https://support.microsoft.com/en-us/help/4552255/cumulative-update-5-for-sql-server-2019
 -- 15.0.4053.23		CU6									 8/4/2020		https://support.microsoft.com/en-us/help/4563110/cumulative-update-6-for-sql-server-2019
--- 15.0.4063.15		CU7									 9/2/2020		https://support.microsoft.com/en-us/help/4570012/cumulative-update-7-for-sql-server-2019
-		
-															
-
--- How to determine the version, edition and update level of SQL Server and its components 
--- https://bit.ly/2oAjKgW
-
--- SQL Server 2019 build versions
--- https://bit.ly/2qjKwOl
+-- 15.0.4063.15		CU7									 9/2/2020		-- CU7 was removed by Microsoft
 
 -- Performance and Stability Fixes in SQL Server 2019 CU Builds
 -- https://bit.ly/3712NQQ
