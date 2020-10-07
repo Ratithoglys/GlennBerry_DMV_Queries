@@ -1,7 +1,7 @@
 
 -- SQL Server 2016 Diagnostic Information Queries
 -- Glenn Berry 
--- Last Modified: October 1, 2020
+-- Last Modified: October 6, 2020
 -- https://glennsqlperformance.com/
 -- https://sqlserverperformance.wordpress.com/
 -- YouTube: https://bit.ly/2PkoAM1 
@@ -163,6 +163,7 @@ SERVERPROPERTY('IsHadrEnabled') AS [IsHadrEnabled],
 SERVERPROPERTY('HadrManagerStatus') AS [HadrManagerStatus],
 SERVERPROPERTY('InstanceDefaultDataPath') AS [InstanceDefaultDataPath],
 SERVERPROPERTY('InstanceDefaultLogPath') AS [InstanceDefaultLogPath],
+SERVERPROPERTY('ErrorLogFileName') AS [ErrorLogFileName],
 SERVERPROPERTY('BuildClrVersion') AS [Build CLR Version],
 SERVERPROPERTY('IsXTPSupported') AS [IsXTPSupported],
 SERVERPROPERTY('IsPolybaseInstalled') AS [IsPolybaseInstalled],				-- New for SQL Server 2016
