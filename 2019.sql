@@ -1,7 +1,7 @@
 
 -- SQL Server 2019 Diagnostic Information Queries
 -- Glenn Berry 
--- Last Modified: October 3, 2021
+-- Last Modified: November 1, 2021
 -- https://glennsqlperformance.com/ 
 -- https://sqlserverperformance.wordpress.com/
 -- YouTube: https://bit.ly/2PkoAM1 
@@ -21,7 +21,7 @@
 -- https://dbatools.io/
 
 -- Invoke-DbaDiagnosticQuery
--- https://dbatools.io/functions/invoke-dbadiagnosticquery/
+-- https://docs.dbatools.io/Invoke-DbaDiagnosticQuery
 
 
 --******************************************************************************
@@ -82,7 +82,8 @@ SELECT @@SERVERNAME AS [Server Name], @@VERSION AS [SQL Server and OS Version In
 -- 15.0.4102.2		CU9									2/11/2021		https://support.microsoft.com/en-in/help/5000642/cumulative-update-9-for-sql-server-2019
 -- 15.0.4123.1		CU10								 4/6/2021       https://support.microsoft.com/en-us/topic/kb5001090-cumulative-update-10-for-sql-server-2019-b6b696ec-6598-48d9-80ee-f1b85d7a508b
 -- 15.0.4138.2		CU11								6/10/2021		https://support.microsoft.com/en-us/topic/kb5003249-cumulative-update-11-for-sql-server-2019-657b2977-a0f1-4e1f-8b93-8c2ca8b6bef5
--- 15.0.4153.1		CU12								 8/4/2021		https://support.microsoft.com/en-us/topic/kb5004524-cumulative-update-12-for-sql-server-2019-45b2d82a-c7d0-4eb8-aa17-d4bad4059987	
+-- 15.0.4153.1		CU12								 8/4/2021		https://support.microsoft.com/en-us/topic/kb5004524-cumulative-update-12-for-sql-server-2019-45b2d82a-c7d0-4eb8-aa17-d4bad4059987
+-- 15.0.4178.1		CU13								10/5/2021		https://support.microsoft.com/en-us/topic/kb5005679-cumulative-update-13-for-sql-server-2019-5c1be850-460a-4be4-a569-fe11f0adc535							
 
 -- Performance and Stability Fixes in SQL Server 2019 CU Builds
 -- https://bit.ly/3712NQQ
@@ -202,7 +203,7 @@ DBCC TRACESTATUS (-1);
 -- TF 3226 - Supresses logging of successful database backup messages to the SQL Server Error Log
 --           https://bit.ly/38zDNAK   
 
--- TF 6534 - Enables use of native code to improve performance with spatial data
+-- TF 6534 - Enables use of native code to improve performance with spatial data. This is a startup trace flag only
 --           https://bit.ly/2HrQUpU         
 
 -- TF 7745 - Prevents Query Store data from being written to disk in case of a failover or shutdown command
@@ -261,7 +262,8 @@ SELECT ISNULL(d.[name], bs.[database_name]) AS [Database], d.recovery_model_desc
        d.log_reuse_wait_desc AS [Log Reuse Wait Desc],
     MAX(CASE WHEN [type] = 'D' THEN bs.backup_finish_date ELSE NULL END) AS [Last Full Backup],
     MAX(CASE WHEN [type] = 'I' THEN bs.backup_finish_date ELSE NULL END) AS [Last Differential Backup],
-    MAX(CASE WHEN [type] = 'L' THEN bs.backup_finish_date ELSE NULL END) AS [Last Log Backup]
+    MAX(CASE WHEN [type] = 'L' THEN bs.backup_finish_date ELSE NULL END) AS [Last Log Backup],
+	DATABASEPROPERTYEX ((d.[name]), 'LastGoodCheckDbTime') AS [Last Good CheckDB]
 FROM sys.databases AS d WITH (NOLOCK)
 LEFT OUTER JOIN msdb.dbo.backupset AS bs WITH (NOLOCK)
 ON bs.[database_name] = d.[name]
@@ -275,17 +277,12 @@ ORDER BY d.recovery_model_desc, d.[name] OPTION (RECOMPILE);
 
 
 -- Get SQL Server Agent jobs and Category information (Query 9) (SQL Server Agent Jobs)
-SELECT sj.name AS [Job Name], 
-sj.[description] AS [Job Description], 
+SELECT sj.name AS [Job Name], sj.[description] AS [Job Description], 
 sc.name AS [CategoryName], SUSER_SNAME(sj.owner_sid) AS [Job Owner],
 sj.date_created AS [Date Created], sj.[enabled] AS [Job Enabled], 
-sj.notify_email_operator_id, sj.notify_level_email,
-h.run_status,
-    STUFF(STUFF(REPLACE(STR(h.run_duration,7,0),
-        ' ','0'),4,0,':'),7,0,':') AS  [Last Duration - HHMMSS],
-     CONVERT(DATETIME, RTRIM(run_date) + ' '
-        + STUFF(STUFF(REPLACE(STR(RTRIM(h.run_time),6,0),
-        ' ','0'),3,0,':'),6,0,':')) AS [Last Start Date]
+sj.notify_email_operator_id, sj.notify_level_email, h.run_status,
+RIGHT(STUFF(STUFF(REPLACE(STR(h.run_duration, 7, 0), ' ', '0'), 4, 0, ':'), 7, 0, ':'),8) AS [Last Duration - HHMMSS],
+CONVERT(DATETIME, RTRIM(h.run_date) + ' ' + STUFF(STUFF(REPLACE(STR(RTRIM(h.run_time),6,0),' ','0'),3,0,':'),6,0,':')) AS [Last Start Date]
 FROM msdb.dbo.sysjobs AS sj WITH (NOLOCK)
 INNER JOIN
     (SELECT job_id, instance_id = MAX(instance_id)
@@ -618,6 +615,7 @@ ORDER BY LogDate DESC OPTION (RECOMPILE);
 DROP TABLE IF EXISTS #ErrorLogFiles;
 DROP TABLE IF EXISTS #SQLErrorLog_AllLogs;
 GO
+------
 
 
 -- Get number of data files in tempdb database (Query 24) (TempDB Data Files)
@@ -1236,7 +1234,8 @@ ORDER BY qs.total_worker_time DESC OPTION (RECOMPILE);
 
 -- Page Life Expectancy (PLE) value for each NUMA node in current instance  (Query 45) (PLE by NUMA Node)
 SELECT @@SERVERNAME AS [Server Name], RTRIM([object_name]) AS [Object Name], 
-       instance_name, cntr_value AS [Page Life Expectancy]
+       instance_name, cntr_value AS [Page Life Expectancy],
+	   GETDATE() AS [System Time]
 FROM sys.dm_os_performance_counters WITH (NOLOCK)
 WHERE [object_name] LIKE N'%Buffer Node%' -- Handles named instances
 AND counter_name = N'Page life expectancy' OPTION (RECOMPILE);
@@ -1290,11 +1289,15 @@ ORDER BY SUM(mc.pages_kb) DESC OPTION (RECOMPILE);
 
 
 -- Find single-use, ad-hoc and prepared queries that are bloating the plan cache  (Query 48) (Ad hoc Queries)
-SELECT TOP(50) DB_NAME(t.[dbid]) AS [Database Name], t.[text] AS [Query Text], 
+SELECT TOP(50) DB_NAME(t.[dbid]) AS [Database Name],
+REPLACE(REPLACE(LEFT(t.[text], 255), CHAR(10),''), CHAR(13),'') AS [Short Query Text], 
 cp.objtype AS [Object Type], cp.cacheobjtype AS [Cache Object Type],  
-cp.size_in_bytes/1024 AS [Plan Size in KB]
+cp.size_in_bytes/1024 AS [Plan Size in KB],
+CASE WHEN CONVERT(nvarchar(max), qp.query_plan) COLLATE Latin1_General_BIN2 LIKE N'%<MissingIndexes>%' THEN 1 ELSE 0 END AS [Has Missing Index]
+--,t.[text] AS [Query Text], qp.query_plan AS [Query Plan] -- uncomment out these columns if not copying results to Excel
 FROM sys.dm_exec_cached_plans AS cp WITH (NOLOCK)
 CROSS APPLY sys.dm_exec_sql_text(plan_handle) AS t
+CROSS APPLY sys.dm_exec_query_plan(plan_handle) AS qp
 WHERE cp.cacheobjtype = N'Compiled Plan' 
 AND cp.objtype IN (N'Adhoc', N'Prepared') 
 AND cp.usecounts = 1
@@ -1492,7 +1495,8 @@ qs.total_worker_time/qs.execution_count AS [Avg Worker Time],
 qs.total_elapsed_time AS [Total Elapsed Time],
 qs.total_elapsed_time/qs.execution_count AS [Avg Elapsed Time],
 CASE WHEN CONVERT(nvarchar(max), qp.query_plan) COLLATE Latin1_General_BIN2 LIKE N'%<MissingIndexes>%' THEN 1 ELSE 0 END AS [Has Missing Index],
-qs.creation_time AS [Creation Time]
+FORMAT(qs.last_execution_time, 'yyyy-MM-dd HH:mm:ss', 'en-US') AS [Last Execution Time], 
+FORMAT(qs.creation_time, 'yyyy-MM-dd HH:mm:ss', 'en-US') AS [Plan Cached Time]
 --,t.[text] AS [Complete Query Text], qp.query_plan AS [Query Plan] -- uncomment out these columns if not copying results to Excel
 FROM sys.dm_exec_query_stats AS qs WITH (NOLOCK)
 CROSS APPLY sys.dm_exec_sql_text(plan_handle) AS t 
@@ -1796,7 +1800,8 @@ ORDER BY [BufferCount] DESC OPTION (RECOMPILE);
 
 
 -- Get Schema names, Table names, object size, row counts, and compression status for clustered index or heap  (Query 70) (Table Sizes)
-SELECT SCHEMA_NAME(o.Schema_ID) AS [Schema Name], OBJECT_NAME(p.object_id) AS [Object Name],
+SELECT DB_NAME(DB_ID()) AS [Database Name], SCHEMA_NAME(o.Schema_ID) AS [Schema Name], 
+OBJECT_NAME(p.object_id) AS [Object Name],
 CAST(SUM(ps.reserved_page_count) * 8.0 / 1024 AS DECIMAL(19,2)) AS [Object Size (MB)],
 SUM(p.Rows) AS [Row Count], 
 p.data_compression_desc AS [Compression Type]
@@ -1891,10 +1896,9 @@ ORDER BY sp.modification_counter DESC, o.name OPTION (RECOMPILE);
 -- Get fragmentation info for all indexes above a certain size in the current database  (Query 74) (Index Fragmentation)
 -- Note: This query could take some time on a very large database
 SELECT DB_NAME(ps.database_id) AS [Database Name], SCHEMA_NAME(o.[schema_id]) AS [Schema Name],
-OBJECT_NAME(ps.OBJECT_ID) AS [Object Name], i.[name] AS [Index Name], ps.index_id, 
-ps.index_type_desc, ps.avg_fragmentation_in_percent, 
-ps.fragment_count, ps.page_count, i.fill_factor, i.has_filter, 
-i.filter_definition, i.[allow_page_locks]
+OBJECT_NAME(ps.OBJECT_ID) AS [Object Name], i.[name] AS [Index Name], ps.index_id, ps.index_type_desc, 
+CAST(ps.avg_fragmentation_in_percent AS DECIMAL (15,3)) AS [Avg Fragmentation in Pct], 
+ps.fragment_count, ps.page_count, i.fill_factor, i.has_filter, i.filter_definition, i.[allow_page_locks]
 FROM sys.dm_db_index_physical_stats(DB_ID(),NULL, NULL, NULL , N'LIMITED') AS ps
 INNER JOIN sys.indexes AS i WITH (NOLOCK)
 ON ps.[object_id] = i.[object_id] 
@@ -1912,12 +1916,12 @@ ORDER BY ps.avg_fragmentation_in_percent DESC OPTION (RECOMPILE);
 
 --- Index Read/Write stats (all tables in current DB) ordered by Reads  (Query 75) (Overall Index Usage - Reads)
 SELECT SCHEMA_NAME(t.[schema_id]) AS [SchemaName], OBJECT_NAME(i.[object_id]) AS [ObjectName], 
-       i.[name] AS [IndexName], i.index_id, 
+       i.[name] AS [IndexName], i.index_id, i.[type_desc] AS [Index Type],
        s.user_seeks, s.user_scans, s.user_lookups,
 	   s.user_seeks + s.user_scans + s.user_lookups AS [Total Reads], 
 	   s.user_updates AS [Writes],  
-	   i.[type_desc] AS [Index Type], i.fill_factor AS [Fill Factor], i.has_filter, i.filter_definition, 
-	   s.last_user_scan, s.last_user_lookup, s.last_user_seek
+	   i.fill_factor AS [Fill Factor], i.has_filter, i.filter_definition, 
+	   s.last_user_scan, s.last_user_lookup, s.last_user_seek, i.[allow_page_locks]
 FROM sys.indexes AS i WITH (NOLOCK)
 LEFT OUTER JOIN sys.dm_db_index_usage_stats AS s WITH (NOLOCK)
 ON i.[object_id] = s.[object_id]
@@ -1934,10 +1938,10 @@ ORDER BY s.user_seeks + s.user_scans + s.user_lookups DESC OPTION (RECOMPILE); -
 
 --- Index Read/Write stats (all tables in current DB) ordered by Writes  (Query 76) (Overall Index Usage - Writes)
 SELECT SCHEMA_NAME(t.[schema_id]) AS [SchemaName],OBJECT_NAME(i.[object_id]) AS [ObjectName], 
-	   i.[name] AS [IndexName], i.index_id,
+	   i.[name] AS [IndexName], i.index_id, i.[type_desc] AS [Index Type],
 	   s.user_updates AS [Writes], s.user_seeks + s.user_scans + s.user_lookups AS [Total Reads], 
-	   i.[type_desc] AS [Index Type], i.fill_factor AS [Fill Factor], i.has_filter, i.filter_definition,
-	   s.last_system_update, s.last_user_update
+	   i.fill_factor AS [Fill Factor], i.has_filter, i.filter_definition,
+	   s.last_system_update, s.last_user_update, i.[allow_page_locks]
 FROM sys.indexes AS i WITH (NOLOCK)
 LEFT OUTER JOIN sys.dm_db_index_usage_stats AS s WITH (NOLOCK)
 ON i.[object_id] = s.[object_id]
@@ -1976,6 +1980,8 @@ ORDER BY total_lock_wait_in_ms DESC OPTION (RECOMPILE);
 
 -- This query is helpful for troubleshooting blocking and deadlocking issues
 
+-- sys.dm_db_index_operational_stats (Transact-SQL)
+-- https://bit.ly/3l5rGEw
 
 
 -- Look at UDF execution statistics (Query 78) (UDF Statistics)
@@ -2095,6 +2101,7 @@ AND bs.[type] = 'D' -- Change to L if you want Log backups
 ORDER BY bs.backup_finish_date DESC OPTION (RECOMPILE);
 ------
 
+
 -- Things to look at:
 -- Are your backup sizes and times changing over time?
 -- Are you using backup compression?
@@ -2107,6 +2114,17 @@ ORDER BY bs.backup_finish_date DESC OPTION (RECOMPILE);
 -- In SQL Server 2016 and newer, native SQL Server backup compression actually works 
 -- much better with databases that are using TDE than in previous versions
 -- https://bit.ly/28Rpb2x
+
+
+-- Get Last Good CheckDB date and time for the current database (Query 85) (Last Good CheckDB)
+SELECT DATABASEPROPERTYEX (DB_NAME(DB_ID()), 'LastGoodCheckDbTime') AS [Last Good CheckDB];
+------
+
+-- The date and time of the last successful DBCC CHECKDB that ran on the current database
+-- If DBCC CHECKDB has not been run on a database, 1900-01-01 00:00:00.000 is returned
+
+-- DATABASEPROPERTYEX (Transact-SQL)
+-- https://bit.ly/3FhvQ41
 
 
 -- Microsoft Visual Studio Dev Essentials
