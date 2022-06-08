@@ -1,7 +1,7 @@
 
 -- SQL Server 2016 SP2 Diagnostic Information Queries
 -- Glenn Berry 
--- Last Modified: April 1, 2022
+-- Last Modified: June 1, 2022
 -- https://glennsqlperformance.com/
 -- https://sqlserverperformance.wordpress.com/
 -- YouTube: https://bit.ly/2PkoAM1 
@@ -280,16 +280,34 @@ FROM sys.dm_server_services WITH (NOLOCK) OPTION (RECOMPILE);
 -- Last backup information by database  (Query 8) (Last Backup By Database)
 SELECT ISNULL(d.[name], bs.[database_name]) AS [Database], d.recovery_model_desc AS [Recovery Model], 
        d.log_reuse_wait_desc AS [Log Reuse Wait Desc],
-    MAX(CASE WHEN [type] = 'D' THEN bs.backup_finish_date ELSE NULL END) AS [Last Full Backup],
-    MAX(CASE WHEN [type] = 'I' THEN bs.backup_finish_date ELSE NULL END) AS [Last Differential Backup],
-    MAX(CASE WHEN [type] = 'L' THEN bs.backup_finish_date ELSE NULL END) AS [Last Log Backup],
+	CONVERT(DECIMAL(18,2), ds.cntr_value/1024.0) AS [Total Data File Size on Disk (MB)],
+	CONVERT(DECIMAL(18,2), ls.cntr_value/1024.0) AS [Total Log File Size on Disk (MB)], 
+	CAST(CAST(lu.cntr_value AS FLOAT) / CAST(ls.cntr_value AS FLOAT) AS DECIMAL(18,2)) * 100 AS [Log Used %],
+    MAX(CASE WHEN bs.[type] = 'D' THEN bs.backup_finish_date ELSE NULL END) AS [Last Full Backup],
+    MAX(CASE WHEN bs.[type] = 'I' THEN bs.backup_finish_date ELSE NULL END) AS [Last Differential Backup],
+    MAX(CASE WHEN bs.[type] = 'L' THEN bs.backup_finish_date ELSE NULL END) AS [Last Log Backup],	
 	DATABASEPROPERTYEX ((d.[name]), 'LastGoodCheckDbTime') AS [Last Good CheckDB]
 FROM sys.databases AS d WITH (NOLOCK)
+INNER JOIN sys.master_files as mf WITH (NOLOCK)
+ON d.database_id = mf.database_id
 LEFT OUTER JOIN msdb.dbo.backupset AS bs WITH (NOLOCK)
 ON bs.[database_name] = d.[name]
 AND bs.backup_finish_date > GETDATE()- 30
+LEFT OUTER JOIN sys.dm_os_performance_counters AS lu WITH (NOLOCK)
+ON d.name = lu.instance_name
+LEFT OUTER JOIN sys.dm_os_performance_counters AS ls WITH (NOLOCK)
+ON d.name = ls.instance_name
+INNER JOIN sys.dm_os_performance_counters AS ds WITH (NOLOCK)
+ON d.name = ds.instance_name
 WHERE d.name <> N'tempdb'
-GROUP BY ISNULL(d.[name], bs.[database_name]), d.recovery_model_desc, d.log_reuse_wait_desc, d.[name]
+AND lu.counter_name LIKE N'Log File(s) Used Size (KB)%' 
+AND ls.counter_name LIKE N'Log File(s) Size (KB)%'
+AND ds.counter_name LIKE N'Data File(s) Size (KB)%'
+AND ls.cntr_value > 0 
+GROUP BY ISNULL(d.[name], bs.[database_name]), d.recovery_model_desc, d.log_reuse_wait_desc, d.[name],
+         CONVERT(DECIMAL(18,2), ds.cntr_value/1024.0),
+	     CONVERT(DECIMAL(18,2), ls.cntr_value/1024.0), 
+         CAST(CAST(lu.cntr_value AS FLOAT) / CAST(ls.cntr_value AS FLOAT) AS DECIMAL(18,2)) * 100
 ORDER BY d.recovery_model_desc, d.[name] OPTION (RECOMPILE);
 ------
 
@@ -779,8 +797,10 @@ OPTION (RECOMPILE);
 SELECT db.[name] AS [Database Name], SUSER_SNAME(db.owner_sid) AS [Database Owner],
 db.[compatibility_level] AS [DB Compatibility Level], 
 db.recovery_model_desc AS [Recovery Model], 
-db.log_reuse_wait_desc AS [Log Reuse Wait Description], 
-CONVERT(DECIMAL(18,2), ls.cntr_value/1024.0) AS [Log Size (MB)], CONVERT(DECIMAL(18,2), lu.cntr_value/1024.0) AS [Log Used (MB)],
+db.log_reuse_wait_desc AS [Log Reuse Wait Description],
+CONVERT(DECIMAL(18,2), ds.cntr_value/1024.0) AS [Total Data File Size on Disk (MB)],
+CONVERT(DECIMAL(18,2), ls.cntr_value/1024.0) AS [Total Log File Size on Disk (MB)], 
+CONVERT(DECIMAL(18,2), lu.cntr_value/1024.0) AS [Log File Used (MB)],
 CAST(CAST(lu.cntr_value AS FLOAT) / CAST(ls.cntr_value AS FLOAT)AS DECIMAL(18,2)) * 100 AS [Log Used %], 
 db.page_verify_option_desc AS [Page Verify Option], db.user_access_desc, db.state_desc, db.containment_desc,
 db.is_mixed_page_allocation_on,  
@@ -796,10 +816,13 @@ LEFT OUTER JOIN sys.dm_os_performance_counters AS lu WITH (NOLOCK)
 ON db.name = lu.instance_name
 LEFT OUTER JOIN sys.dm_os_performance_counters AS ls WITH (NOLOCK)
 ON db.name = ls.instance_name
+INNER JOIN sys.dm_os_performance_counters AS ds WITH (NOLOCK)
+ON db.name = ds.instance_name
 LEFT OUTER JOIN sys.dm_database_encryption_keys AS de WITH (NOLOCK)
 ON db.database_id = de.database_id
 WHERE lu.counter_name LIKE N'Log File(s) Used Size (KB)%' 
 AND ls.counter_name LIKE N'Log File(s) Size (KB)%'
+AND ds.counter_name LIKE N'Data File(s) Size (KB)%'
 AND ls.cntr_value > 0 
 ORDER BY db.[name] OPTION (RECOMPILE);
 ------
@@ -1681,8 +1704,8 @@ SELECT TOP(25) OBJECT_NAME(objectid) AS [ObjectName],
                cp.objtype, cp.usecounts, cp.size_in_bytes, qp.query_plan
 FROM sys.dm_exec_cached_plans AS cp WITH (NOLOCK)
 CROSS APPLY sys.dm_exec_query_plan(cp.plan_handle) AS qp
-WHERE CAST(query_plan AS NVARCHAR(MAX)) LIKE N'%MissingIndex%'
-AND dbid = DB_ID()
+WHERE CAST(qp.query_plan AS NVARCHAR(MAX)) LIKE N'%MissingIndex%'
+AND qp.dbid = DB_ID()
 ORDER BY cp.usecounts DESC OPTION (RECOMPILE);
 ------
 
