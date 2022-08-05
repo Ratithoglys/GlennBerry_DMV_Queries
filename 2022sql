@@ -1,7 +1,7 @@
 
 -- SQL Server 2022 Diagnostic Information Queries
 -- Glenn Berry 
--- Last Modified: August 1, 2022
+-- Last Modified: August 4, 2022
 -- https://glennsqlperformance.com/ 
 -- https://sqlserverperformance.wordpress.com/
 -- YouTube: https://bit.ly/2PkoAM1 
@@ -759,6 +759,7 @@ ORDER BY avg_io_latency_ms DESC OPTION (RECOMPILE);
 
 
 -- Look for I/O requests taking longer than 15 seconds in the six most recent SQL Server Error Logs (Query 30) (IO Warnings)
+DROP TABLE IF EXISTS #IOWarningResults;
 CREATE TABLE #IOWarningResults(LogDate datetime, ProcessInfo sysname, LogText nvarchar(1000));
 
 	INSERT INTO #IOWarningResults 
@@ -783,7 +784,7 @@ SELECT LogDate, ProcessInfo, LogText
 FROM #IOWarningResults
 ORDER BY LogDate DESC;
 
-DROP TABLE #IOWarningResults;
+DROP TABLE IF EXISTS #IOWarningResults;
 ------  
 
 -- Finding 15 second I/O warnings in the SQL Server Error Log is useful evidence of
