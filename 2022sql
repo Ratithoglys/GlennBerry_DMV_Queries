@@ -1,7 +1,7 @@
 
 -- SQL Server 2022 Diagnostic Information Queries
 -- Glenn Berry 
--- Last Modified: August 24, 2022
+-- Last Modified: September 1, 2022
 -- https://glennsqlperformance.com/ 
 -- https://sqlserverperformance.wordpress.com/
 -- YouTube: https://bit.ly/2PkoAM1 
@@ -290,6 +290,9 @@ FROM sys.dm_server_accelerator_status WITH (NOLOCK) OPTION (RECOMPILE);
 ------
 
 -- This shows which accelerators are present and their detailed status information
+
+-- sys.dm_server_accelerator_status (Transact-SQL)
+-- https://bit.ly/3B6Fczw
 
 -- How to Enable Intel QAT Backup Compression in SQL Server 2022
 -- https://bit.ly/3Cudwpy
