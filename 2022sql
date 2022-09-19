@@ -152,6 +152,7 @@ ORDER BY name OPTION (RECOMPILE);
 -- Focus on these settings:
 -- automatic soft-NUMA disabled (should be 0 in most cases)
 -- backup checksum default (should be 1)
+-- backup compression algorithm
 -- backup compression default (should be 1 in most cases)
 -- clr enabled (only enable if it is needed)
 -- cost threshold for parallelism (depends on your workload)
