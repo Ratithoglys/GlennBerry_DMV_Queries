@@ -1,7 +1,7 @@
 
 -- SQL Server 2022 Diagnostic Information Queries
 -- Glenn Berry 
--- Last Modified: September 6, 2022
+-- Last Modified: October 3, 2022
 -- https://glennsqlperformance.com/ 
 -- https://sqlserverperformance.wordpress.com/
 -- YouTube: https://bit.ly/2PkoAM1 
@@ -61,6 +61,7 @@ SELECT @@SERVERNAME AS [Server Name], @@VERSION AS [SQL Server and OS Version In
 -- 16.0.600.9		CTP 2.0								5/20/2022
 -- 16.0.700.4		CTP 2.1								7/27/2022
 -- 16.0.900.6		RC0									8/23/2022
+-- 16.0.950.9		RC1									9/22/2022		
 
 -- What's new in SQL Server 2022 (16.x) Preview
 -- https://bit.ly/3MJEjR1
@@ -565,6 +566,12 @@ EXEC sys.xp_instance_regread N'HKEY_LOCAL_MACHINE', N'HARDWARE\DESCRIPTION\Syste
 -- Get CPU vectorization level from SQL Server Error log (Query 22) (CPU Vectorization Level)
 EXEC sys.xp_readerrorlog 0, 1, N'CPU vectorization level';
 ------ 
+
+-- Note: TF 15097 enables AVX-512 support for SQL Server 2022 (16.x) Preview and later (if your CPU supports it)
+-- If you see AVX-512 in the CPU vectorization level results, you should consider enabling TF 15097
+-- Here are some CPU families that have AVX-512 support:
+-- Intel Ice Lake and later
+-- AMD EYPC Genoa and later
 
 
 
@@ -1524,7 +1531,7 @@ ORDER BY vlf_sequence_number DESC OPTION (RECOMPILE);
 
 
 -- Get database scoped configuration values for current database (Query 59) (Database-scoped Configurations)
-SELECT configuration_id, name, [value] AS [value_for_primary], value_for_secondary
+SELECT configuration_id, name, [value] AS [value_for_primary], value_for_secondary, is_value_default
 FROM sys.database_scoped_configurations WITH (NOLOCK) OPTION (RECOMPILE);
 ------
 
