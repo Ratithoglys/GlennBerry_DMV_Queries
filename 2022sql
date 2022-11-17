@@ -1,7 +1,7 @@
 
 -- SQL Server 2022 Diagnostic Information Queries
 -- Glenn Berry 
--- Last Modified: November 1, 2022
+-- Last Modified: November 16, 2022
 -- https://glennsqlperformance.com/ 
 -- https://sqlserverperformance.wordpress.com/
 -- YouTube: https://bit.ly/2PkoAM1 
@@ -61,7 +61,8 @@ SELECT @@SERVERNAME AS [Server Name], @@VERSION AS [SQL Server and OS Version In
 -- 16.0.600.9		CTP 2.0								5/20/2022
 -- 16.0.700.4		CTP 2.1								7/27/2022
 -- 16.0.900.6		RC0									8/23/2022
--- 16.0.950.9		RC1									9/22/2022		
+-- 16.0.950.9		RC1									9/22/2022
+-- 16.0.1000.6		RTM									11/16/2022
 
 -- What's new in SQL Server 2022 (16.x) Preview
 -- https://bit.ly/3MJEjR1
@@ -606,6 +607,7 @@ IF EXISTS (SELECT * WHERE CONVERT(VARCHAR(2), SERVERPROPERTY('ProductMajorVersio
 
 -- Note: TF 15097 enables AVX-512 support for SQL Server 2022 (16.x) Preview and later (if your CPU supports it)
 -- If you see AVX-512 in the CPU vectorization level results, you should consider enabling TF 15097
+-- AVX-512 support only works in Enterprise Edition
 
 -- Here are some CPU families that have good AVX-512 support:
 -- Intel Ice Lake and later
