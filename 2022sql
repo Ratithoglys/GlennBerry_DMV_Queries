@@ -1525,6 +1525,7 @@ ORDER BY f.[type], f.[file_id] OPTION (RECOMPILE);
 
 -- Look at how large and how full the files are and where they are located
 -- Make sure the transaction log is not full!!
+-- In order to get IFI on log files, the auto growth increment should be 64MB or less
 
 -- is_autogrow_all_files was new for SQL Server 2016. Equivalent to TF 1117 for user databases
 
