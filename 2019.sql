@@ -1645,7 +1645,7 @@ qs.total_elapsed_time, qs.total_elapsed_time/qs.execution_count AS [avg_elapsed_
 CASE WHEN CONVERT(nvarchar(max), qp.query_plan) COLLATE Latin1_General_BIN2 LIKE N'%<MissingIndexes>%' THEN 1 ELSE 0 END AS [Has Missing Index],
 CONVERT(nvarchar(25), qs.last_execution_time, 20) AS [Last Execution Time],
 CONVERT(nvarchar(25), qs.cached_time, 20) AS [Plan Cached Time]
--- ,qp.query_plan AS [Query Plan] -- Uncomment if you want the Query Plan
+,qp.query_plan AS [Query Plan] -- Uncomment if you want the Query Plan
 FROM sys.procedures AS p WITH (NOLOCK)
 INNER JOIN sys.dm_exec_procedure_stats AS qs WITH (NOLOCK)
 ON p.[object_id] = qs.[object_id]
