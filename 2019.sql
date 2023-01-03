@@ -1,7 +1,7 @@
 
 -- SQL Server 2019 Diagnostic Information Queries
 -- Glenn Berry 
--- Last Modified: December 1, 2022
+-- Last Modified: January 3, 2023
 -- https://glennsqlperformance.com/ 
 -- https://sqlserverperformance.wordpress.com/
 -- YouTube: https://bit.ly/2PkoAM1 
@@ -25,7 +25,7 @@
 
 
 --******************************************************************************
---*   Copyright (C) 2022 Glenn Berry
+--*   Copyright (C) 2023 Glenn Berry
 --*   All rights reserved. 
 --*
 --*
@@ -813,7 +813,7 @@ SELECT LogDate, ProcessInfo, LogText
 FROM #IOWarningResults
 ORDER BY LogDate DESC;
 
-DROP TABLE #IOWarningResults;
+DROP TABLE IF EXISTS #IOWarningResults;
 ------  
 
 -- Finding 15 second I/O warnings in the SQL Server Error Log is useful evidence of
