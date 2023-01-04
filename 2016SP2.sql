@@ -768,7 +768,7 @@ SELECT LogDate, ProcessInfo, LogText
 FROM #IOWarningResults
 ORDER BY LogDate DESC;
 
-DROP TABLE #IOWarningResults;
+DROP TABLE IF EXISTS #IOWarningResults;
 ------  
 
 -- Finding 15 second I/O warnings in the SQL Server Error Log is useful evidence of
