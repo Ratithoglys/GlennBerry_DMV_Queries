@@ -666,8 +666,11 @@ EXEC sys.xp_readerrorlog 0, 1, N'The tempdb database has';
 EXEC sys.xp_readerrorlog 0, 1, N'The tempdb database data files are not configured with the same initial size';
 ------
 
+-- You want this query to return no results
 -- All of your tempdb data files should have the same initial size and autogrowth settings 
--- This query will return no results if your error log has been recycled since the instance was last started
+-- This query will also return no results if your error log has been recycled since the instance was last started
+-- KB3170020 - Informational messages added for tempdb configuration in the SQL Server error log in SQL Server 2012 and 2014
+-- https://bit.ly/3IsR8jh
 
 
 -- File names and paths for all user and system databases on instance  (Query 26) (Database Filenames and Paths)
