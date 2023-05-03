@@ -446,7 +446,7 @@ ORDER BY end_time DESC OPTION (RECOMPILE);
 
 
 
--- Get recent resource usage (Query 23) (Avg-Max Resource Usage)
+-- Get avg-max resource usage (Query 23) (Avg-Max Resource Usage)
 SELECT CAST(AVG(avg_cpu_percent) AS DECIMAL(10,2)) AS [Average CPU Utilization In Percent],   
        CAST(MAX(avg_cpu_percent) AS DECIMAL(10,2)) AS [Maximum CPU Utilization In Percent],   
        CAST(AVG(avg_data_io_percent) AS DECIMAL(10,2)) AS [Average Data IO In Percent],   
