@@ -1,7 +1,7 @@
 
 -- Azure SQL Database Diagnostic Information Queries
 -- Glenn Berry 
--- Last Modified: April 1, 2023
+-- Last Modified: May 3, 2023
 -- https://glennsqlperformance.com/
 -- https://sqlserverperformance.wordpress.com/
 -- YouTube: https://bit.ly/2PkoAM1 
@@ -21,7 +21,7 @@
 
 
 --******************************************************************************
---*   Copyright (C) 2022 Glenn Berry
+--*   Copyright (C) 2023 Glenn Berry
 --*   All rights reserved. 
 --*
 --*
