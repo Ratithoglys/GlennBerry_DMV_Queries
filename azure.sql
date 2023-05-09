@@ -1,7 +1,7 @@
 
 -- Azure SQL Database Diagnostic Information Queries
 -- Glenn Berry 
--- Last Modified: May 3, 2023
+-- Last Modified: May 7, 2023
 -- https://glennsqlperformance.com/
 -- https://sqlserverperformance.wordpress.com/
 -- YouTube: https://bit.ly/2PkoAM1 
@@ -651,7 +651,7 @@ qs.total_logical_reads/qs.execution_count AS [Avg Logical Reads],
 CASE WHEN CONVERT(nvarchar(max), qp.query_plan) LIKE N'%<MissingIndexes>%' THEN 1 ELSE 0 END AS [Has Missing Index],
 FORMAT(qs.last_execution_time, 'yyyy-MM-dd HH:mm:ss', 'en-US') AS [Last Execution Time], 
 FORMAT(qs.cached_time, 'yyyy-MM-dd HH:mm:ss', 'en-US') AS [Plan Cached Time]
- ,qp.query_plan AS [Query Plan] -- Uncomment if you want the Query Plan
+ --,qp.query_plan AS [Query Plan] -- Uncomment if you want the Query Plan
 FROM sys.procedures AS p WITH (NOLOCK)
 INNER JOIN sys.dm_exec_procedure_stats AS qs WITH (NOLOCK)
 ON p.[object_id] = qs.[object_id]
@@ -1051,26 +1051,8 @@ ORDER BY s.user_updates DESC OPTION (RECOMPILE);						 -- Order by writes
 -- Show which indexes in the current database are most active for Writes
 
 
--- Get in-memory OLTP index usage (Query 47) (XTP Index Usage)  --DELETE this
-SELECT OBJECT_NAME(i.[object_id]) AS [Object Name], i.index_id, i.[name] AS [Index Name],
-       i.[type_desc], xis.scans_started, xis.scans_retries, 
-	   xis.rows_touched, xis.rows_returned
-FROM sys.dm_db_xtp_index_stats AS xis WITH (NOLOCK)
-INNER JOIN sys.indexes AS i WITH (NOLOCK)
-ON i.[object_id] = xis.[object_id] 
-AND i.index_id = xis.index_id 
-ORDER BY OBJECT_NAME(i.[object_id]) OPTION (RECOMPILE);
-------
 
--- This gives you some index usage statistics for in-memory OLTP
--- Returns no data if you are not using in-memory OLTP
-
--- Guidelines for Using Indexes on Memory-Optimized Tables
--- https://bit.ly/2GCP8lF
-
-
-
--- Look at Columnstore index physical statistics (Query 48) (Columnstore Index Physical Stat)
+-- Look at Columnstore index physical statistics (Query 47) (Columnstore Index Physical Stat)
 SELECT OBJECT_NAME(ps.object_id) AS [TableName],  
 	i.[name] AS [IndexName], ps.index_id, ps.partition_number,
 	ps.delta_store_hobt_id, ps.state_desc, ps.total_rows, ps.size_in_bytes,
@@ -1089,7 +1071,7 @@ ORDER BY ps.object_id, ps.partition_number, ps.row_group_id OPTION (RECOMPILE);
 
 
 
--- Get lock waits for current database (Query 49) (Lock Waits)
+-- Get lock waits for current database (Query 48) (Lock Waits)
 SELECT o.name AS [table_name], i.name AS [index_name], ios.index_id, ios.partition_number,
 		SUM(ios.row_lock_wait_count) AS [total_row_lock_waits], 
 		SUM(ios.row_lock_wait_in_ms) AS [total_row_lock_wait_in_ms],
@@ -1112,7 +1094,7 @@ ORDER BY total_lock_wait_in_ms DESC OPTION (RECOMPILE);
 
 
 
--- Look at UDF execution statistics (Query 50) (UDF Statistics)
+-- Look at UDF execution statistics (Query 49) (UDF Statistics)
 SELECT OBJECT_NAME(object_id) AS [Function Name], total_worker_time,
        execution_count, total_elapsed_time,  
        total_elapsed_time/execution_count AS [avg_elapsed_time],  
@@ -1131,7 +1113,7 @@ ORDER BY total_worker_time DESC OPTION (RECOMPILE);
 
 
 
--- Get QueryStore Options for this database (Query 51) (QueryStore Options)
+-- Get QueryStore Options for this database (Query 50) (QueryStore Options)
 SELECT actual_state_desc, desired_state_desc,
        current_storage_size_mb, [max_storage_size_mb], 
 	   query_capture_mode_desc, size_based_cleanup_mode_desc, 
@@ -1146,7 +1128,7 @@ FROM sys.database_query_store_options WITH (NOLOCK) OPTION (RECOMPILE);
 -- https://bit.ly/1kHSl7w
 
 
--- Get highest aggregate duration queries over last hour (Query 52) (High Aggregate Duration Queries)
+-- Get highest aggregate duration queries over last hour (Query 51) (High Aggregate Duration Queries)
 WITH AggregatedDurationLastHour
 AS
 (SELECT q.query_id, SUM(count_executions * avg_duration) AS total_duration,
@@ -1189,7 +1171,7 @@ ORDER BY total_duration DESC OPTION (RECOMPILE);
 -- Requires that QueryStore is enabled for this database
 
 
--- Get input buffer information for the current database (Query 53) (Input Buffer)
+-- Get input buffer information for the current database (Query 52) (Input Buffer)
 SELECT es.session_id, DB_NAME(es.database_id) AS [Database Name],
        es.login_time, es.cpu_time, es.logical_reads,
        es.[status], ib.event_info AS [Input Buffer]
@@ -1208,7 +1190,7 @@ AND es.session_id <> @@SPID OPTION (RECOMPILE);
 
 
 
--- Get any resumable index rebuild operation information (Query 54) (Resumable Index Rebuild)
+-- Get any resumable index rebuild operation information (Query 53) (Resumable Index Rebuild)
 SELECT OBJECT_NAME(iro.object_id) AS [Object Name], iro.index_id, iro.name AS [Index Name],
        iro.sql_text, iro.last_max_dop_used, iro.partition_number, iro.state_desc, iro.start_time, iro.percent_complete
 FROM  sys.index_resumable_operations AS iro WITH (NOLOCK)
@@ -1219,7 +1201,7 @@ OPTION (RECOMPILE);
 -- https://bit.ly/2pYSWqq
 
 
--- Get database automatic tuning options (Query 55) (Automatic Tuning Options)
+-- Get database automatic tuning options (Query 54) (Automatic Tuning Options)
 SELECT [name], desired_state_desc, actual_state_desc, reason_desc
 FROM sys.database_automatic_tuning_options WITH (NOLOCK)
 OPTION (RECOMPILE);
@@ -1230,7 +1212,7 @@ OPTION (RECOMPILE);
 
 
 
--- Get geo-replication link status for all secondary databases (Query 56) (Geo-Replication Link Status)
+-- Get geo-replication link status for all secondary databases (Query 55) (Geo-Replication Link Status)
 SELECT link_guid, partner_server, partner_database, last_replication, 
        replication_lag_sec, replication_state_desc, role_desc, secondary_allow_connections_desc 
 FROM sys.dm_geo_replication_link_status WITH (NOLOCK) OPTION (RECOMPILE);
@@ -1241,7 +1223,7 @@ FROM sys.dm_geo_replication_link_status WITH (NOLOCK) OPTION (RECOMPILE);
 
 
 
--- Retrieve some Azure SQL Database properties (Query 57) (Azure SQL DB Properties)
+-- Retrieve some Azure SQL Database properties (Query 56) (Azure SQL DB Properties)
 SELECT DATABASEPROPERTYEX (DB_NAME(DB_ID()), 'Edition') AS [Database Edition],
 	   DATABASEPROPERTYEX (DB_NAME(DB_ID()), 'ServiceObjective') AS [Service Objective],
 	   DATABASEPROPERTYEX (DB_NAME(DB_ID()), 'MaxSizeInBytes') AS [Max Size In Bytes],
