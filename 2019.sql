@@ -1,7 +1,7 @@
 
 -- SQL Server 2019 Diagnostic Information Queries
 -- Glenn Berry 
--- Last Modified: August 18, 2023
+-- Last Modified: September 1, 2023
 -- https://glennsqlperformance.com/ 
 -- https://sqlserverperformance.wordpress.com/
 -- YouTube: https://bit.ly/2PkoAM1 
@@ -226,6 +226,11 @@ DBCC TRACESTATUS (-1);
 
 -- TF 7745 - Prevents Query Store data from being written to disk in case of a failover or shutdown command
 --           https://bit.ly/2GU69Km
+
+-- TF 8121 - Fixes a system-wide low memory issue that occurs when SQL Server commits memory above the maximum server memory under the memory model with the Lock Pages In Memory (added in CU15)
+--           https://learn.microsoft.com/en-US/troubleshoot/sql/releases/sqlserver-2019/cumulativeupdate15#bkmk_14421838
+
+
 
 
 -- DBCC TRACEON - Trace Flags (Transact-SQL)
