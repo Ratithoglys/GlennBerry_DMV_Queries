@@ -1,11 +1,11 @@
 
 -- SQL Server 2008 R2 Diagnostic Information Queries
 -- Glenn Berry 
--- Last Modified: March 6, 2024
+-- Last Modified: November 19, 2024
 -- https://glennsqlperformance.com/
 -- https://sqlserverperformance.wordpress.com/
 -- YouTube: https://bit.ly/2PkoAM1 
--- Twitter: GlennAlanBerry
+-- Blue Sky: https://bsky.app/profile/glennalanberry.bsky.social
 
 -- Diagnostic Queries are available here
 -- https://glennsqlperformance.com/resources/

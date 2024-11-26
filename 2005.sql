@@ -1,11 +1,11 @@
 
 -- SQL Server 2005 Diagnostic Information Queries
 -- Glenn Berry 
--- Last Modified: January 3, 2023
+-- Last Modified: November 19, 2024
 -- https://glennsqlperformance.com/
 -- https://sqlserverperformance.wordpress.com/
 -- YouTube: https://bit.ly/2PkoAM1 
--- Twitter: GlennAlanBerry
+-- Blue Sky: https://bsky.app/profile/glennalanberry.bsky.social
 
 -- Diagnostic Queries are available here
 -- https://glennsqlperformance.com/resources/
@@ -14,7 +14,7 @@
 -- Please make sure you are using the correct version of these diagnostic queries for your version of SQL Server
 
 --******************************************************************************
---*   Copyright (C) 2023 Glenn Berry
+--*   Copyright (C) 2024 Glenn Berry
 --*   All rights reserved. 
 --*
 --*
