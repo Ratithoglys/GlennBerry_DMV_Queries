@@ -1,7 +1,7 @@
 
 -- SQL Server 2014 Diagnostic Information Queries
 -- Glenn Berry 
--- Last Modified: December 2, 2024
+-- Last Modified: January 1, 2025
 -- https://glennsqlperformance.com/
 -- https://sqlserverperformance.wordpress.com/
 -- YouTube: https://bit.ly/2PkoAM1 
@@ -25,7 +25,7 @@
 
 
 --******************************************************************************
---*   Copyright (C) 2024 Glenn Berry
+--*   Copyright (C) 2025 Glenn Berry
 --*   All rights reserved. 
 --*
 --*
@@ -55,6 +55,9 @@ IF NOT EXISTS (SELECT * WHERE CONVERT(varchar(128), SERVERPROPERTY('ProductVersi
 -- SQL and OS Version information for current instance  (Query 1) (Version Info)
 SELECT @@SERVERNAME AS [Server Name], @@VERSION AS [SQL Server and OS Version Info];
 ------
+
+-- SQL Server 2014 is out of both mainstream and extended support from Microsoft
+
 
 -- SQL Server 2014 RTM Branch Builds						SQL Server 2014 SP1 Branch Builds						SQL Server 2014 SP2 Branch Builds					SQL Server 2014 SP23 Branch Builds				
 -- Build			Description			Release Date		Build			Description		Release Date			Build			Description		Release Date		Build			Description		Release Date
