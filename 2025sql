@@ -1,7 +1,7 @@
 
 -- SQL Server 2025 Diagnostic Information Queries
 -- Glenn Berry 
--- Last Modified: January 1, 2025
+-- Last Modified: February 1, 2025
 -- https://glennsqlperformance.com/ 
 -- https://sqlserverperformance.wordpress.com/
 -- YouTube: https://bit.ly/2PkoAM1 
@@ -912,7 +912,7 @@ db.is_auto_close_on, db.is_auto_shrink_on, db.target_recovery_time_in_seconds, d
 db.is_published, db.is_distributor, db.is_sync_with_backup, 
 db.group_database_id, db.replica_id, db.is_memory_optimized_enabled, db.is_memory_optimized_elevate_to_snapshot_on, 
 db.delayed_durability_desc, db.is_query_store_on, 
-db.is_temporal_history_retention_enabled,
+db.is_temporal_history_retention_enabled, db.is_optimized_locking_on,
 db.is_data_retention_enabled, db.is_ledger_on, db.is_change_feed_enabled,
 db.is_master_key_encrypted_by_server, db.is_encrypted, de.encryption_state, de.percent_complete, de.key_algorithm, de.key_length
 FROM sys.databases AS db WITH (NOLOCK)
@@ -1135,6 +1135,7 @@ AS (SELECT wait_type, wait_time_ms/ 1000.0 AS [WaitS],
            ROW_NUMBER() OVER(ORDER BY wait_time_ms DESC) AS [RowNum]
     FROM sys.dm_os_wait_stats WITH (NOLOCK)
     WHERE [wait_type] NOT IN (
+	    N'AZURE_IMDS_VERSIONS',
         N'BROKER_EVENTHANDLER', N'BROKER_RECEIVE_WAITFOR', N'BROKER_TASK_STOP',
 		N'BROKER_TO_FLUSH', N'BROKER_TRANSMITTER', N'CHECKPOINT_QUEUE',
         N'CHKPT', N'CLR_AUTO_EVENT', N'CLR_MANUAL_EVENT', N'CLR_SEMAPHORE', N'CXCONSUMER',
