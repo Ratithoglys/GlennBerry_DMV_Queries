@@ -135,9 +135,6 @@ SELECT @@SERVERNAME AS [Server Name], @@VERSION AS [SQL Server and OS Version In
 -- Download SQL Server Management Studio (SSMS)
 -- https://bit.ly/1OcupT9
 
--- Download and install Azure Data Studio
--- https://bit.ly/2vgke1A
-
 -- SQL Server 2016 Configuration Manager is SQLServerManager13.msc
 
 -- SQL Server troubleshooting (Microsoft documentation resources)
