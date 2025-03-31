@@ -1,7 +1,7 @@
 
 -- SQL Server 2016 SP2 Diagnostic Information Queries
 -- Glenn Berry 
--- Last Modified: March 1, 2025
+-- Last Modified: April 1, 2025
 -- https://glennsqlperformance.com/
 -- https://sqlserverperformance.wordpress.com/
 -- YouTube: https://bit.ly/2PkoAM1 
@@ -62,7 +62,8 @@ ELSE
 SELECT @@SERVERNAME AS [Server Name], @@VERSION AS [SQL Server and OS Version Info];
 ------
 
--- SQL Server 2016 is out of mainstream from Microsoft
+-- SQL Server 2016 fell out of Mainstream Support on Jul 13, 2021
+-- SQL Server 2016 will fall out of Extended Support on Jul 14, 2026
 
 
 -- SQL Server 2016 Builds																		

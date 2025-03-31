@@ -1,7 +1,7 @@
 
 -- SQL Server 2017 Diagnostic Information Queries
 -- Glenn Berry 
--- Last Modified: March 1, 2025
+-- Last Modified: April 1, 2025
 -- https://glennsqlperformance.com/
 -- https://sqlserverperformance.wordpress.com/
 -- YouTube: https://bit.ly/2PkoAM1 
@@ -56,8 +56,8 @@ IF NOT EXISTS (SELECT * WHERE CONVERT(varchar(128), SERVERPROPERTY('ProductVersi
 SELECT @@SERVERNAME AS [Server Name], @@VERSION AS [SQL Server and OS Version Info];
 ------
 
--- SQL Server 2017 is out of mainstream from Microsoft
-
+-- SQL Server 2017 fell out of Mainstream Support on Oct 11, 2022
+-- SQL Server 2017 will fall out of Extended Support on Oct 12, 2027
 
 -- SQL Server 2017 Builds																		
 -- Build			Description							Release Date	URL to KB Article								
@@ -113,6 +113,10 @@ SELECT @@SERVERNAME AS [Server Name], @@VERSION AS [SQL Server and OS Version In
 -- 14.0.3475.1		CU31 + GDR							9/10/2024		https://support.microsoft.com/en-us/topic/kb5042215-description-of-the-security-update-for-sql-server-2017-cu31-september-10-2024-55bba26f-548d-466c-9c48-edfb51a53a8a
 -- 14.0.3480.1		CU31 + GDR							10/8/2024		https://support.microsoft.com/en-us/topic/kb5046061-description-of-the-security-update-for-sql-server-2017-cu31-october-8-2024-af669e75-bc43-4679-bfbe-e153e679dd2f
 -- 14.0.3485.1		CU31 + GDR						   11/12/2024		https://support.microsoft.com/en-us/topic/kb5046858-description-of-the-security-update-for-sql-server-2017-cu31-november-12-2024-2984d3a5-0683-4f9b-9e6a-3888e67bd859
+
+-- SQL Server 2017 Azure Connect Pack builds
+-- Azure Connect Feature Pack is optional and should be installed only if you intend to connect SQL Server with Azure SQL Managed Instance
+-- 14.0.3490.10		Azure Connect Pack					3/6/2025		https://learn.microsoft.com/en-us/troubleshoot/sql/releases/sqlserver-2017/azureconnect
 
 
 -- How to determine the version, edition and update level of SQL Server and its components 

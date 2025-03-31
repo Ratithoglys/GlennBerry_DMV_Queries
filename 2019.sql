@@ -1,7 +1,7 @@
 
 -- SQL Server 2019 Diagnostic Information Queries
 -- Glenn Berry 
--- Last Modified: March 1, 2025
+-- Last Modified: April 1, 2025
 -- https://glennsqlperformance.com/ 
 -- https://sqlserverperformance.wordpress.com/
 -- YouTube: https://bit.ly/2PkoAM1 
@@ -55,6 +55,9 @@ IF NOT EXISTS (SELECT * WHERE CONVERT(varchar(128), SERVERPROPERTY('ProductVersi
 -- SQL and OS Version information for current instance  (Query 1) (Version Info)
 SELECT @@SERVERNAME AS [Server Name], @@VERSION AS [SQL Server and OS Version Info];
 ------
+
+-- SQL Server 2019 fell out of Mainstream Support on Feb 28, 2025
+-- SQL Server 2019 will fall out of Extended Support on Jan 8, 2030
 
 -- SQL Server 2019 Builds																		
 -- Build			Description							Release Date	URL to KB Article								
