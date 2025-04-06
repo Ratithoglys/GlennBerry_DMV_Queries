@@ -1,7 +1,7 @@
 
 -- SQL Server 2017 Diagnostic Information Queries
 -- Glenn Berry 
--- Last Modified: April 1, 2025
+-- Last Modified: April 5, 2025
 -- https://glennsqlperformance.com/
 -- https://sqlserverperformance.wordpress.com/
 -- YouTube: https://bit.ly/2PkoAM1 
@@ -1794,7 +1794,7 @@ ORDER BY index_advantage DESC OPTION (RECOMPILE);
 -- Note: This query could take some time on a busy instance
 SELECT TOP(25) OBJECT_NAME(objectid) AS [ObjectName], 
                cp.objtype, cp.usecounts, cp.size_in_bytes
-			   , qp.query_plan								-- Uncomment if you want the Query Plan
+--			   , qp.query_plan								-- Uncomment if you want the Query Plan
 FROM sys.dm_exec_cached_plans AS cp WITH (NOLOCK)
 CROSS APPLY sys.dm_exec_query_plan(cp.plan_handle) AS qp
 WHERE CAST(qp.query_plan AS NVARCHAR(MAX)) LIKE N'%MissingIndex%'
@@ -2016,7 +2016,7 @@ ON ios.[object_id] = i.[object_id]
 AND ios.index_id = i.index_id
 WHERE o.[object_id] > 100
 GROUP BY o.name, i.name, ios.index_id, ios.partition_number
-HAVING SUM(ios.page_lock_wait_in_ms)+ SUM(row_lock_wait_in_ms) > 0
+HAVING SUM(ios.page_lock_wait_in_ms) + SUM(row_lock_wait_in_ms) > 0
 ORDER BY total_lock_wait_in_ms DESC OPTION (RECOMPILE);
 ------
 
@@ -2084,20 +2084,6 @@ AND es.is_user_process = 1 OPTION (RECOMPILE);
 -- sys.dm_exec_input_buffer (Transact-SQL)
 -- https://bit.ly/2J5Hf9q
 
-
-
--- Get any resumable index rebuild operation information (Query 82) (Resumable Index Rebuild)
-SELECT OBJECT_NAME(iro.object_id) AS [Object Name], iro.index_id, iro.name AS [Index Name],
-       iro.sql_text, iro.last_max_dop_used, iro.partition_number, iro.state_desc, 
-       iro.start_time, CONVERT(decimal(15,2),iro.percent_complete) AS [Percent Complete], 
-	   iro.last_pause_time, iro.total_execution_time AS [Execution Min],
-       CONVERT(decimal(15,2),iro.total_execution_time * (100.0 - iro.percent_complete)/iro.percent_complete) AS [Approx Execution Min Left] 
-FROM  sys.index_resumable_operations AS iro WITH (NOLOCK)
-OPTION (RECOMPILE);
------- 
-
--- index_resumable_operations (Transact-SQL)
--- https://bit.ly/2pYSWqq
 
 
 -- Get database automatic tuning options (Query 83) (Automatic Tuning Options)
