@@ -1,7 +1,7 @@
 
 -- SQL Server 2017 Diagnostic Information Queries
 -- Glenn Berry 
--- Last Modified: April 5, 2025
+-- Last Modified: April 24, 2025
 -- https://glennsqlperformance.com/
 -- https://sqlserverperformance.wordpress.com/
 -- YouTube: https://bit.ly/2PkoAM1 
@@ -850,7 +850,7 @@ DROP TABLE IF EXISTS #IOWarningResults;
 
 
 -- Resource Governor Resource Pool information (Query 31) (RG Resource Pools)
-SELECT pool_id, [Name], statistics_start_time,
+SELECT pool_id, [name], statistics_start_time,
        min_memory_percent, max_memory_percent,  
        max_memory_kb/1024 AS [max_memory_mb],  
        used_memory_kb/1024 AS [used_memory_mb],   
