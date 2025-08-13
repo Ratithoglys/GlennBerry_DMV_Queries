@@ -1,7 +1,7 @@
 
 -- SQL Server 2022 Diagnostic Information Queries
 -- Glenn Berry 
--- Last Modified: June 12, 2025
+-- Last Modified: August 12, 2025
 -- https://glennsqlperformance.com/ 
 -- https://sqlserverperformance.wordpress.com/
 -- YouTube: https://bit.ly/2PkoAM1 
@@ -92,7 +92,10 @@ SELECT @@SERVERNAME AS [Server Name], @@VERSION AS [SQL Server and OS Version In
 -- 16.0.4165.4		CU16								11/14/2024		https://learn.microsoft.com/en-us/troubleshoot/sql/releases/sqlserver-2022/cumulativeupdate16
 -- 16.0.4175.1		CU17								1/16/2025		https://learn.microsoft.com/en-us/troubleshoot/sql/releases/sqlserver-2022/cumulativeupdate17
 -- 16.0.4185.3		CU18								3/13/2025		https://learn.microsoft.com/en-us/troubleshoot/sql/releases/sqlserver-2022/cumulativeupdate18
--- 16.0.4195.2		CU19								5/15/2025		
+-- 16.0.4195.2		CU19								5/15/2025		https://learn.microsoft.com/en-us/troubleshoot/sql/releases/sqlserver-2022/cumulativeupdate19
+-- 16.0.4200.1		CU19 + GDR							7/8/2025		https://support.microsoft.com/en-us/topic/kb5058721-description-of-the-security-update-for-sql-server-2022-cu19-july-8-2025-fcf14446-c16b-46b1-a096-f1b775dd45be
+-- 16.0.4205.1		CU20								7/10/2025		https://learn.microsoft.com/en-us/troubleshoot/sql/releases/sqlserver-2022/cumulativeupdate20
+-- 16.0.4210.1		CU20 + GDR							8/12/2025		https://support.microsoft.com/en-us/topic/kb5063814-description-of-the-security-update-for-sql-server-2022-cu20-august-12-2025-8744624f-a95c-4902-a191-5a25079d7f37
 
 
 -- What's new in SQL Server 2022 (16.x)
@@ -1982,15 +1985,16 @@ ORDER BY [Difference] DESC, [Total Writes] DESC, [Total Reads] ASC OPTION (RECOM
 
 
 -- Missing Indexes for current database by Index Advantage  (Query 72) (Missing Indexes)
-SELECT CONVERT(decimal(18,2), migs.user_seeks * migs.avg_total_user_cost * (migs.avg_user_impact * 0.01)) AS [index_advantage], 
-CONVERT(nvarchar(25), migs.last_user_seek, 20) AS [last_user_seek],
+SELECT CONVERT(decimal(18,2), migs.user_seeks * migs.avg_total_user_cost * (migs.avg_user_impact * 0.01)) AS [Index Advantage], 
+CONVERT(nvarchar(25), migs.last_user_seek, 20) AS [Last User Seek],
 mid.[statement] AS [Database.Schema.Table], 
 COUNT(1) OVER(PARTITION BY mid.[statement]) AS [missing_indexes_for_table], 
 COUNT(1) OVER(PARTITION BY mid.[statement], mid.equality_columns) AS [similar_missing_indexes_for_table], 
 mid.equality_columns, mid.inequality_columns, mid.included_columns, migs.user_seeks, 
-CONVERT(decimal(18,2), migs.avg_total_user_cost) AS [avg_total_user_,cost], migs.avg_user_impact,
+CONVERT(decimal(18,2), migs.avg_total_user_cost) AS [Avg Total User Cost], 
+CONVERT(decimal(18,2), migs.avg_user_impact) AS [Avg User Impact],
 REPLACE(REPLACE(LEFT(st.[text], 512), CHAR(10),''), CHAR(13),'') AS [Short Query Text],
-OBJECT_NAME(mid.[object_id]) AS [Table Name], p.rows AS [Table Rows]
+OBJECT_NAME(mid.[object_id]) AS [Table Name], p.[rows] AS [Table Rows]
 FROM sys.dm_db_missing_index_groups AS mig WITH (NOLOCK) 
 INNER JOIN sys.dm_db_missing_index_group_stats_query AS migs WITH(NOLOCK) 
 ON mig.index_group_handle = migs.group_handle 
@@ -2001,7 +2005,7 @@ INNER JOIN sys.partitions AS p WITH (NOLOCK)
 ON p.[object_id] = mid.[object_id]
 WHERE mid.database_id = DB_ID()
 AND p.index_id < 2 
-ORDER BY index_advantage DESC OPTION (RECOMPILE);
+ORDER BY [Index Advantage] DESC OPTION (RECOMPILE);
 ------
 
 -- Look at index advantage, last user seek time, number of user seeks to help determine source and importance

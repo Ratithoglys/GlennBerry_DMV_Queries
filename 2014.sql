@@ -1,7 +1,7 @@
 
 -- SQL Server 2014 Diagnostic Information Queries
 -- Glenn Berry 
--- Last Modified: June 3, 2025
+-- Last Modified: August 4, 2025
 -- https://glennsqlperformance.com/
 -- https://sqlserverperformance.wordpress.com/
 -- YouTube: https://bit.ly/2PkoAM1 

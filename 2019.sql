@@ -1,7 +1,7 @@
 
 -- SQL Server 2019 Diagnostic Information Queries
 -- Glenn Berry 
--- Last Modified: June 12, 2025
+-- Last Modified: August 12, 2025
 -- https://glennsqlperformance.com/ 
 -- https://sqlserverperformance.wordpress.com/
 -- YouTube: https://bit.ly/2PkoAM1 
@@ -113,6 +113,9 @@ SELECT @@SERVERNAME AS [Server Name], @@VERSION AS [SQL Server and OS Version In
 -- 15.0.4415.2		CU30								12/12/2024		https://learn.microsoft.com/en-us/troubleshoot/sql/releases/sqlserver-2019/cumulativeupdate30
 -- 15.0.4420.2		CU31								2/13/2025		https://learn.microsoft.com/en-us/troubleshoot/sql/releases/sqlserver-2019/cumulativeupdate31
 -- 15.0.4430.1      CU32                                2/27/2025       https://learn.microsoft.com/en-us/troubleshoot/sql/releases/sqlserver-2019/cumulativeupdate32
+-- 15.0.4440.1		CU32 + GDR							8/12/2025	    https://support.microsoft.com/en-us/topic/kb5063757-description-of-the-security-update-for-sql-server-2019-cu32-august-12-2025-d4df46ef-6b1e-4a6c-aa8c-914d25f74345
+
+
 
 -- How to determine the version, edition and update level of SQL Server and its components 
 -- https://bit.ly/2oAjKgW	
@@ -1905,15 +1908,16 @@ ORDER BY [Difference] DESC, [Total Writes] DESC, [Total Reads] ASC OPTION (RECOM
 
 
 -- Missing Indexes for current database by Index Advantage  (Query 70) (Missing Indexes)
-SELECT CONVERT(decimal(18,2), migs.user_seeks * migs.avg_total_user_cost * (migs.avg_user_impact * 0.01)) AS [index_advantage], 
-CONVERT(nvarchar(25), migs.last_user_seek, 20) AS [last_user_seek],
+SELECT CONVERT(decimal(18,2), migs.user_seeks * migs.avg_total_user_cost * (migs.avg_user_impact * 0.01)) AS [Index Advantage], 
+CONVERT(nvarchar(25), migs.last_user_seek, 20) AS [Last User Seek],
 mid.[statement] AS [Database.Schema.Table], 
 COUNT(1) OVER(PARTITION BY mid.[statement]) AS [missing_indexes_for_table], 
 COUNT(1) OVER(PARTITION BY mid.[statement], mid.equality_columns) AS [similar_missing_indexes_for_table], 
 mid.equality_columns, mid.inequality_columns, mid.included_columns, migs.user_seeks, 
-CONVERT(decimal(18,2), migs.avg_total_user_cost) AS [avg_total_user_,cost], migs.avg_user_impact,
+CONVERT(decimal(18,2), migs.avg_total_user_cost) AS [Avg Total User Cost], 
+CONVERT(decimal(18,2), migs.avg_user_impact) AS [Avg User Impact],
 REPLACE(REPLACE(LEFT(st.[text], 512), CHAR(10),''), CHAR(13),'') AS [Short Query Text],
-OBJECT_NAME(mid.[object_id]) AS [Table Name], p.rows AS [Table Rows]
+OBJECT_NAME(mid.[object_id]) AS [Table Name], p.[rows] AS [Table Rows]
 FROM sys.dm_db_missing_index_groups AS mig WITH (NOLOCK) 
 INNER JOIN sys.dm_db_missing_index_group_stats_query AS migs WITH(NOLOCK) 
 ON mig.index_group_handle = migs.group_handle 
@@ -1924,7 +1928,7 @@ INNER JOIN sys.partitions AS p WITH (NOLOCK)
 ON p.[object_id] = mid.[object_id]
 WHERE mid.database_id = DB_ID()
 AND p.index_id < 2 
-ORDER BY index_advantage DESC OPTION (RECOMPILE);
+ORDER BY [Index Advantage] DESC OPTION (RECOMPILE);
 ------
 
 -- Look at index advantage, last user seek time, number of user seeks to help determine source and importance
